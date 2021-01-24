@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Questions</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+    table
+    {
+        width: 100%;
+    }
+    </style>
+</head>
+<body>
+    {% with search_phrase=search_phrase, request=request %}
+        {% include "topnav.html" %}
+    {% endwith %}
+
+    <h1>Questions</h1>
+    <br>
+    <a href="{{ url_for("add_question_post") }}">Add new question</a>
+    <br><br>
+    <td>Sort by:</td><br>
+    <form action="{{ url_for("sort_question_post") }}" method="post">
+        <select name="Header" id="Header">
+            <option value=""></option>
+            <option value="submission_time">Submission time</option>
+            <option value="view_number">View number</option>
+            <option value="vote_number">Vote number</option>
+            <option value="title">Title</option>
+            <option value="message">Message</option>
+        </select><br><br>
+        <select name="Direction" id="Direction">
+            <option value=""></option>
+            <option value="ascending">Ascending</option>
+            <option value="descending">Descending</option>
+        </select><br><br>
+            <input type="submit" value="Submit">
+    </form><br>
+    <table border="1">
+        {% for header in headers %}
+            {% if header == "submission_time" %}
+                <th style="width: 10%">submission time</th>
+            {% elif header == "view_number" %}
+                <th style="width: 7%">view number</th>
+            {% elif header == "vote_number" %}
+                <th style="width: 7%">vote number</th>
+            {% else %}
+                <th>
+                    {{ header }}
+                </th>
+            {% endif %}
+        {% endfor %}
+
+        <tbody>
+            {% for question in questions %}
+                <tr>
+                    {% for element in question %}
+                        {% if element == 'id' %}
+                            <td>
+                                <a href="{{ url_for("question_page", question_id=question["id"]) }}">{{ question[element] }}</a>
+                            </td>
+                        {% else %}
+                            <td class="detail", style="text-align:center">{{ question.get(element) }}</td>
+                        {% endif %}
+                    {% endfor %}
+                <td>
+                    <a href = "{{ url_for("question_vote_up", question_id=question["id"]) }}">&#128077;</a>
+                </td>
+                <td>
+                    <a href = "{{ url_for("question_vote_down", question_id=question["id"]) }}">&#128078;</a>
+                </td>
+                </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Ask mate</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <style>
+    table
+    {
+        width: 100%;
+    }
+
+    </style>
+</head>
+<body>
+
+    {% include ["topnav.html", "style.css"] ignore missing %}
+
+    <br><br>
+
+    <table border="1">
+        {% for header in headers %}
+            <th>{{ header }}</th>
+        {% endfor %}
+
+        <tbody>
+            {% for question in questions %}
+                <tr>
+                    {% for element in question %}
+                        {% if element == 'id' %}
+                            <td>
+                                <a href="{{ url_for("question_page", question_id=question["id"]) }}">{{ question[element] }}</a>
+                            </td>
+                        {% else %}
+                            <td class="detail", style="text-align:center">{{ question.get(element) }}</td>
+                        {% endif %}
+                    {% endfor %}
+
+                </td>
+                </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

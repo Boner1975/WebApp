@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Search</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+</head>
+<body>
+    {% with search_phrase=search_phrase, request=request %}
+        {% include "topnav.html" %}
+    {% endwith %}
+
+    <span id="search_para">
+        {% for RealDictRow in search %}
+            {% for element in RealDictRow %}
+                <p id="title" style="text-align:center"> {{ RealDictRow[element] }}</p>
+                <br>
+            {% endfor %}
+        {% endfor %}
+    </span>
+<script>
+    let params = (new URL(document.location)).searchParams;
+    let name = params.get('search_phrase');
+    document.getElementById('search_para').innerHTML = document.getElementById('search_para').innerHTML.replaceAll(name, '<span style="background-color:goldenrod;">' + name + '</span>');
+</script>
+</body>
+</html>

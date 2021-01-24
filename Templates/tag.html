@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Add an comment</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    {% with search_phrase=search_phrase, request=request %}
+        {% include "topnav.html" %}
+    {% endwith %}
+
+    <h1>Add tag</h1>
+    <form action="{{ url_for("add_tag_to_question", question_id=question_id) }}" method="post" enctype = "multipart/form-data">
+        <label for="name_select">Choose one of existing tags:</label><br>
+        <select id="name_select" name="name_select">
+            <option></option>
+            {% for tag in tags %}
+                <option value="{{ tag["name"] }}">{{ tag["name"] }}</option>
+            {% endfor %}
+        </select><br><br>
+        <label for="name">Or add new tag:</label><br>
+        <textarea id="tag" name="name" minlength="1" maxlength="20"></textarea><br><br>
+        <br><br>
+        <input type="submit" value="Add tag">
+        <label name="message">{{ message }}</label>
+    </form>
+
+</body>
+</html>
+

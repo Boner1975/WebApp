@@ -1,0 +1,14 @@
+
+    <div class="topnav">
+        <a {% if request.endpoint == "main_page" %} class="active" {% endif %} href="{{ url_for("main_page") }}"><i class="fa fa-home" aria-hidden="true"></i>Home</a>
+        <a {% if request.endpoint == "display_question" %} class="active" {% endif %} href="{{ url_for("display_question") }}"><i class="fa fa-list-ol" aria-hidden="true"></i>Questions</a>
+        <a {% if request.endpoint == "about" %} class="active" {% endif %} href="{{ url_for("about") }}"><i class="fa fa-building" aria-hidden="true"></i>About</a>
+        <a href="#about">Users</a>
+        <div class="search-container">
+            <form action="{{ url_for("search_question", search_phrase=search_phrase) }}" method="GET">
+                <input type="text" placeholder="Search.." name="search_phrase">
+                <button type="submit" onClick="search()" id="search"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
+    </div>
+
