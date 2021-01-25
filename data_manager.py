@@ -192,6 +192,21 @@ def greatest_question_tag_id(cursor: RealDictCursor):
     return result[0]['id']
 
 @connection.connection_handler
+def greatest_user_id(cursor: RealDictCursor):
+    query = """
+        SELECT user_id
+        FROM users
+        ORDER BY user_id DESC 
+        LIMIT 1
+        """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    if len(result) == 0:
+        return 0
+    else:
+        return result[0]['user_id']
+
+@connection.connection_handler
 def get_answer_id(cursor: RealDictCursor, question_id):
     query = """
         SELECT answer_id
@@ -480,6 +495,41 @@ def sort_dictionaries(cursor: RealDictCursor, header, direction):
     questions = cursor.fetchall()
     return util.sort_dictionaries(questions, header, direction)
 
+@connection.connection_handler
+def get_users(cursor: RealDictCursor):
+    query = """
+        SELECT user_name
+        FROM users"""
+    cursor.execute(query)
+    return cursor.fetchall()
+
+@connection.connection_handler
+def add_user(cursor: RealDictCursor, user) -> list:
+    command = """
+    INSERT INTO users (user_id, user_name, registration_date, count_of_asked_questions, count_of_answers,
+                count_of_comments, reputation, password)
+    VALUES (%(user_id)s, %(user_name)s, %(registration_date)s, %(count_of_asked_questions)s, %(count_of_answers)s, 
+            %(count_of_comments)s, %(reputation)s, %(password)s);"""
+
+    param = {
+        'user_id': user['user_id'],
+        'user_name': user['user_name'],
+        'registration_date': user['registration_date'],
+        'count_of_asked_questions': user['count_of_asked_questions'],
+        'count_of_answers': user['count_of_answers'],
+        'count_of_comments': user['count_of_comments'],
+        'reputation': user['reputation'],
+        'password': user['password']
+    }
+    cursor.execute(command, param)
+
+@connection.connection_handler
+def get_users(cursor: RealDictCursor):
+    query = """
+        SELECT user_name
+        FROM users"""
+    cursor.execute(query)
+    return cursor.fetchall()
 
 
 

@@ -1,12 +1,11 @@
 import os
 
-from flask import Flask, render_template, url_for, request, redirect, abort
-
+from flask import Flask, render_template, url_for, request, redirect, abort, session
+import bcrypt
 import data_manager
 import util
 
 app = Flask(__name__)
-
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png']
 
 @app.route("/")
@@ -297,6 +296,31 @@ def add_tag_to_question(question_id):
 def delete_tag(question_id, tag_id):
     data_manager.delete_tag(tag_id)
     return redirect(url_for("question_page", question_id=question_id))
+
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    if request.method == 'GET':
+        return render_template("registration.html")
+    data = dict(request.form)
+    users = data_manager.get_users()
+    if data['user_name'] in [element['user_name'] for element in users]:
+        return render_template("registration.html", message='This username already exist in database, choose another one')
+    else:
+        data['user_id'] = data_manager.greatest_user_id() + 1
+        data['registration_date'] = data_manager.submission_time()
+        data['count_of_asked_questions'] = 0
+        data['count_of_answers'] = 0
+        data['count_of_comments'] = 0
+        data['reputation'] = 0
+        data['password'] = hash_password(data['password'])
+        data_manager.add_user(data)
+    return redirect(url_for("main_page"))
+
+
+def hash_password(password):
+    hashed_password = bcrypt.hashpw(password.encode('UTF-8'), bcrypt.gensalt())
+    return hashed_password
+
 
 if __name__ == "__main__":
     app.run()

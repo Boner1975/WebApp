@@ -18,7 +18,8 @@
     {% include ["topnav.html", "style.css"] ignore missing %}
 
     <br><br>
-
+    <a href="{{ url_for("registration") }}">Register new account</a>
+    <br><br>
     <table border="1">
         {% for header in headers %}
             <th>{{ header }}</th>

@@ -29,3 +29,6 @@ ALTER TABLE comment
 
 ALTER TABLE ONLY comment
     ADD CONSTRAINT fk_user_id foreign key (user_id) REFERENCES users(user_id);
+
+ALTER TABLE answer
+    ADD COLUMN IF NOT EXISTS accepted bool;
