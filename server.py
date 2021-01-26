@@ -321,9 +321,29 @@ def registration():
 
 
 def hash_password(password):
-    hashed_password = bcrypt.hashpw(password.encode('UTF-8'), bcrypt.gensalt())
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('UTF-8'), salt)
     return hashed_password
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    else:
+        #data = dict(request.form)
+        users = data_manager.get_users()
+        if request.form['user_name'] in [element['user_name'] for element in users] and verify_password(request.form['password'], data_manager.get_password(request.form['user_name'])):
+            session['user_name'] = request.form['user_name']
+
+            return redirect(url_for('index'))
+        else:
+            message = 'Wrong password'
+
+    return render_template('login.html', message=message)
+
+def verify_password(plain_text_pswrd, hash_pswrd):
+    hashed_byte_password = hash_pswrd.encode('UTF-8')
+    return bcrypt.checkpw(plain_text_pswrd.encode('UTF-8'), hashed_byte_password)
 
 if __name__ == "__main__":
     app.run()

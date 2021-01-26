@@ -531,5 +531,14 @@ def get_users(cursor: RealDictCursor):
     cursor.execute(query)
     return cursor.fetchall()
 
-
+@connection.connection_handler
+def get_password(cursor: RealDictCursor, username):
+    query = """
+        SELECT password
+        FROM users
+        where users.user_name = %(username)s"""
+    param = {"username": username}
+    cursor.execute(query, param)
+    result = cursor.fetchall()
+    return result[0]['password']
 

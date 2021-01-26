@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+{% include "topnav.html" %}
+        <h1>Provide data</h1>
+        <form action="{{ url_for("login") }}" method = "post" enctype = "multipart/form-data">
+            <label for = "user_name">Username:</label><br>
+            <input name = "user_name" id = "user_name" type = "text" minlength="5" maxlength="100" value="">
+            <br><br>
+            <label for = "password">Password:</label><br>
+            <input name = "password" id = "password" minlength="5" maxlength="500"></input>
+            <br><br>
+            <input type="submit" value="Login">
+            <label name="message">{{ message }}</label>
+        </form>
+</body>
+</html>
