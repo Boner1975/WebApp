@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS public.users;
 CREATE TABLE users (
     user_id serial NOT NULL,
     user_name text,
+    password text,
     registration_date timestamp without time zone,
     count_of_asked_questions integer,
     count_of_answers integer,
