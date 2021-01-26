@@ -16,12 +16,16 @@
 <body>
 
     {% include ["topnav.html", "style.css"] ignore missing %}
-
-    <br><br>
-    <a href="{{ url_for("registration") }}">Register new account</a>
-    <br>
-    <a href="{{ url_for("login") }}">Log in</a>
-    <br><br>
+    {% if session.user_name %}
+        <p>Logged in as {{ session.user_name }}</p>
+        <p><a href="/logout">Log out</a></p>
+    {% else %}
+        <br><br>
+        <a href="{{ url_for("registration") }}">Register new account</a>
+        <br>
+        <a href="{{ url_for("login") }}">Log in</a>
+        <br><br>
+    {% endif %}
     <table border="1">
         {% for header in headers %}
             <th>{{ header }}</th>

@@ -346,6 +346,11 @@ def verify_password(plain_text_pswrd, hash_pswrd):
     #hashed_byte_password = hash_pswrd.encode('UTF-8')
     return bcrypt.checkpw(plain_text_pswrd.encode('UTF-8'), hash_pswrd)
 
+@app.route('/logout')
+def logout():
+    session.pop('user_name', None)
+    return redirect(url_for('main_page'))
+
 def is_logged_in():
     return 'user_name' in session
 
