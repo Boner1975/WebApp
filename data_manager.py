@@ -13,6 +13,19 @@ import connection
 
 
 @connection.connection_handler
+def users_list(cursor: RealDictCursor):
+    query = """
+    SELECT user_name, registration_date, count_of_asked_questions, count_of_answers, count_of_comments, reputation
+    FROM users
+    ORDER BY reputation 
+    """
+
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+
+@connection.connection_handler
 def search_result(cursor: RealDictCursor, search_phrase):
     query = """
     SELECT question.title FROM question

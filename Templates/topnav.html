@@ -3,7 +3,9 @@
         <a {% if request.endpoint == "main_page" %} class="active" {% endif %} href="{{ url_for("main_page") }}"><i class="fa fa-home" aria-hidden="true"></i>Home</a>
         <a {% if request.endpoint == "display_question" %} class="active" {% endif %} href="{{ url_for("display_question") }}"><i class="fa fa-list-ol" aria-hidden="true"></i>Questions</a>
         <a {% if request.endpoint == "about" %} class="active" {% endif %} href="{{ url_for("about") }}"><i class="fa fa-building" aria-hidden="true"></i>About</a>
-        <a href="#about">Users</a>
+        <a {% if request.endpoint == "users" %} class="active" {% endif %} href="{{ url_for("users") }}">Users</a>
+        <a style="float: right" {% if request.endpoint == "register" %} class="active" {% endif %} href="{{ url_for("users") }}">Register</a>
+        <a style="float: right" {% if request.endpoint == "login" %} class="active" {% endif %} href="{{ url_for("users") }}">LogIn</a>
         <div class="search-container">
             <form action="{{ url_for("search_question", search_phrase=search_phrase) }}" method="GET">
                 <input type="text" placeholder="Search.." name="search_phrase">

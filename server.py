@@ -8,15 +8,23 @@ import util
 app = Flask(__name__)
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png']
 
+
 @app.route("/")
 def main_page():
     headers = ['id', 'submission_time', 'view_number', 'title', 'message', 'image', 'vote_number']
     questions = data_manager.display_five_latest_questions()
     return render_template("index.html", headers=headers, questions=questions, request=request)
 
+
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+
+@app.route("/users")
+def users():
+    users_list_data = data_manager.users_list()
+    return render_template("users.html", users_list_data=users_list_data)
 
 
 @app.route("/list")
@@ -85,7 +93,6 @@ def add_question_post():
     return redirect(url_for("display_question"))
 
 
-
 @app.route("/question/<question_id>/edit", methods=["GET"])
 def edit_question_get(question_id):
     if not question_id.isnumeric():
@@ -139,6 +146,7 @@ def add_user_answer_post(question_id):
 
     return render_template("answer.html", answer_id = 0, question_id=question_id, answer = None)
 
+
 @app.route("/question/<question_id>/new-comment", methods=["GET", "POST"])
 def add_comment_to_question(question_id):
     if request.method == "GET":
@@ -151,6 +159,7 @@ def add_comment_to_question(question_id):
     data['question_id'] = question_id
     data_manager.add_comment(data)
     return redirect(url_for("question_page", question_id=question_id))
+
 
 @app.route("/comment/<comment_id>/edit", methods=["GET"])
 def edit_comment_to_question(comment_id):
@@ -173,6 +182,7 @@ def edit_comment_to_question_post(comment_id, question_id):
 
     return redirect(url_for("question_page", question_id=question_id))
 
+
 @app.route("/answer/<answer_id>/<question_id>/new-comment", methods=["GET", "POST"])
 def add_comment_to_answer(answer_id, question_id):
     if request.method == "GET":
@@ -185,6 +195,7 @@ def add_comment_to_answer(answer_id, question_id):
     data['question_id'] = question_id
     data_manager.add_comment(data)
     return redirect(url_for("question_page", answer_id=answer_id, question_id=question_id))
+
 
 @app.route("/comment/<comment_id>/edit", methods=["GET"])
 def edit_comment_to_answer(comment_id):
@@ -206,6 +217,7 @@ def edit_comment_to_answer_post(comment_id, answer_id, question_id):
     data_manager.update_comment(data)
 
     return redirect(url_for("question_page", answer_id=answer_id, question_id=question_id))
+
 
 @app.route("/answer/<answer_id>/edit", methods=["GET"])
 def edit_answer_get(answer_id):
@@ -232,6 +244,7 @@ def edit_answer_post(answer_id, question_id):
 def delete_answer(question_id, answer_id):
     data_manager.delete_answer(answer_id)
     return redirect(url_for("question_page", question_id=question_id))
+
 
 @app.route("/question/<question_id>/comment/<comment_id>/delete")
 def delete_comment(question_id, comment_id):
@@ -269,6 +282,7 @@ def search_question():
     search = data_manager.search_result(search_phrase)
     return render_template("search_result.html", search_phrase=search_phrase, search=search)
 
+
 @app.route("/question/<question_id>/new-tag", methods=["GET", "POST"])
 def add_tag_to_question(question_id):
     if request.method == "GET":
@@ -292,10 +306,12 @@ def add_tag_to_question(question_id):
         data_manager.add_new_tag(data)
     return redirect(url_for("question_page", question_id=question_id))
 
+
 @app.route("/question/<question_id>/tag/<tag_id>/delete")
 def delete_tag(question_id, tag_id):
     data_manager.delete_tag(tag_id)
     return redirect(url_for("question_page", question_id=question_id))
+
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
