@@ -540,5 +540,5 @@ def get_password(cursor: RealDictCursor, username):
     param = {"username": username}
     cursor.execute(query, param)
     result = cursor.fetchall()
-    return result[0]['password']
+    return bytes(result[0]['password'], 'utf_8')
 

@@ -7,6 +7,7 @@ import util
 
 app = Flask(__name__)
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png']
+app.secret_key = 'mojsupersekretnyklucz'
 
 @app.route("/")
 def main_page():
@@ -301,29 +302,29 @@ def delete_tag(question_id, tag_id):
 def registration():
     if request.method == 'GET':
         return render_template("registration.html")
-    data = dict(request.form)
-    users = data_manager.get_users()
-    if data['user_name'] in [element['user_name'] for element in users]:
-        return render_template("registration.html", message='This username already exist in database, choose another one')
-    elif data['user_name'] == '' or data['password'] == '':
-        return render_template("registration.html", message='Please fill in both fields')
-
     else:
+        data = dict(request.form)
+        users = data_manager.get_users()
+        if data['user_name'] in [element['user_name'] for element in users]:
+            return render_template("registration.html", message='This username already exist in database, choose another one')
+        elif data['user_name'] == '' or data['password'] == '':
+            return render_template("registration.html", message='Please fill in both fields')
+
         data['user_id'] = data_manager.greatest_user_id() + 1
         data['registration_date'] = data_manager.submission_time()
         data['count_of_asked_questions'] = 0
         data['count_of_answers'] = 0
         data['count_of_comments'] = 0
         data['reputation'] = 0
-        data['password'] = hash_password(data['password'])
+        data['password'] = hash_password(data['password'])[0].decode('utf_8')
         data_manager.add_user(data)
-    return redirect(url_for("main_page"))
+        return redirect(url_for("main_page"))
 
 
 def hash_password(password):
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password.encode('UTF-8'), salt)
-    return hashed_password
+    return hashed_password, salt
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -335,15 +336,18 @@ def login():
         if request.form['user_name'] in [element['user_name'] for element in users] and verify_password(request.form['password'], data_manager.get_password(request.form['user_name'])):
             session['user_name'] = request.form['user_name']
 
-            return redirect(url_for('index'))
+            return redirect(url_for('main_page'))
         else:
             message = 'Wrong password'
 
     return render_template('login.html', message=message)
 
 def verify_password(plain_text_pswrd, hash_pswrd):
-    hashed_byte_password = hash_pswrd.encode('UTF-8')
-    return bcrypt.checkpw(plain_text_pswrd.encode('UTF-8'), hashed_byte_password)
+    #hashed_byte_password = hash_pswrd.encode('UTF-8')
+    return bcrypt.checkpw(plain_text_pswrd.encode('UTF-8'), hash_pswrd)
+
+def is_logged_in():
+    return 'user_name' in session
 
 if __name__ == "__main__":
     app.run()
