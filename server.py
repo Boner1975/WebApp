@@ -305,6 +305,9 @@ def registration():
     users = data_manager.get_users()
     if data['user_name'] in [element['user_name'] for element in users]:
         return render_template("registration.html", message='This username already exist in database, choose another one')
+    elif data['user_name'] == '' or data['password'] == '':
+        return render_template("registration.html", message='Please fill in both fields')
+
     else:
         data['user_id'] = data_manager.greatest_user_id() + 1
         data['registration_date'] = data_manager.submission_time()
