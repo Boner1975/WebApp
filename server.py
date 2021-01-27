@@ -353,14 +353,15 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
     else:
-        #data = dict(request.form)
+        data = dict(request.form)
         users = data_manager.get_users()
         if request.form['user_name'] in [element['user_name'] for element in users] and verify_password(request.form['password'], data_manager.get_password(request.form['user_name'])):
             session['user_name'] = request.form['user_name']
-
             return redirect(url_for('main_page'))
+        elif data['user_name'] == '' or data['password'] == '':
+            return render_template("login.html", message='Please fill in all fields')
         else:
-            message = 'Wrong password'
+            message = 'Wrong password or username'
 
     return render_template('login.html', message=message)
 
