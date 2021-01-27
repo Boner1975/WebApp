@@ -235,8 +235,8 @@ def get_answer_id(cursor: RealDictCursor, question_id):
 def add_comment(cursor: RealDictCursor, comment) -> list:
     comment_id = greatest_comment_id()
     command = """
-    INSERT INTO comment (id, question_id, answer_id, message, submission_time, edited_count)
-    VALUES (%(id)s, %(question_id)s, %(answer_id)s, %(message)s, %(submission_time)s, %(edited_count)s)
+    INSERT INTO comment (id, question_id, answer_id, message, submission_time, edited_count, user_id)
+    VALUES (%(id)s, %(question_id)s, %(answer_id)s, %(message)s, %(submission_time)s, %(edited_count)s, %(user_id)s)
     """
 
     param = {
@@ -245,7 +245,8 @@ def add_comment(cursor: RealDictCursor, comment) -> list:
         'answer_id': comment['answer_id'],
         'message': comment['message'],
         'submission_time': comment['submission_time'],
-        'edited_count': comment['edited_count']
+        'edited_count': comment['edited_count'],
+        'user_id': comment['user_id']
     }
     cursor.execute(command, param)
 
@@ -253,8 +254,8 @@ def add_comment(cursor: RealDictCursor, comment) -> list:
 def add_answer(cursor: RealDictCursor, answer) -> list:
     answer_id = greatest_answer_id()
     command = """
-    INSERT INTO answer (id, submission_time, vote_number, question_id, message, image)
-    VALUES (%(id)s, %(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s)
+    INSERT INTO answer (id, submission_time, vote_number, question_id, message, image, user_id)
+    VALUES (%(id)s, %(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s, %(user_id)s)
     """
 
     param = {
@@ -263,7 +264,8 @@ def add_answer(cursor: RealDictCursor, answer) -> list:
         'vote_number': answer['vote_number'],
         'question_id': answer['question_id'],
         'message': answer['message'],
-        'image': answer['image']
+        'image': answer['image'],
+        'user_id': answer['user_id']
     }
     cursor.execute(command, param)
 
@@ -281,8 +283,8 @@ def update_answer(cursor: RealDictCursor, data):
 @connection.connection_handler
 def add_question(cursor: RealDictCursor, question) -> list:
     command = """
-    INSERT INTO question (id, submission_time, view_number, vote_number, title, message, image)
-    VALUES (%(id)s, %(submission_time)s, %(view_number)s, %(vote_number)s, %(title)s, %(message)s, %(image)s);"""
+    INSERT INTO question (id, submission_time, view_number, vote_number, title, message, image, user_id)
+    VALUES (%(id)s, %(submission_time)s, %(view_number)s, %(vote_number)s, %(title)s, %(message)s, %(image)s, %(user_id)s);"""
 
 
     param = {
@@ -292,7 +294,8 @@ def add_question(cursor: RealDictCursor, question) -> list:
         'vote_number': question['vote_number'],
         'title': question['title'],
         'message': question['message'],
-        'image': question['image']
+        'image': question['image'],
+        'user_id': question['user_id']
     }
     cursor.execute(command, param)
 
@@ -554,4 +557,15 @@ def get_password(cursor: RealDictCursor, username):
     cursor.execute(query, param)
     result = cursor.fetchall()
     return bytes(result[0]['password'], 'utf_8')
+
+@connection.connection_handler
+def get_session_user_id(cursor: RealDictCursor, username):
+    query = """
+        SELECT user_id
+        FROM users
+        where users.user_name = %(username)s"""
+    param = {"username": username}
+    cursor.execute(query, param)
+    result = cursor.fetchall()
+    return result[0]['user_id']
 

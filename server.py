@@ -80,6 +80,7 @@ def add_question_post():
     data["view_number"] = 0
     data["vote_number"] = 0
     data["image"] = ""
+    data["user_id"]= data_manager.get_session_user_id(session['user_name'])
     uploaded_file = request.files['file']
     if uploaded_file.filename != '':
         file_ext = os.path.splitext(uploaded_file.filename)[1]
@@ -132,6 +133,7 @@ def add_user_answer_post(question_id):
         data["vote_number"] = 0
         data['question_id'] = question_id
         data["image"] = ""
+        data["user_id"] = data_manager.get_session_user_id(session['user_name'])
 
         uploaded_file = request.files['image']
         if uploaded_file.filename != '':
@@ -158,6 +160,7 @@ def add_comment_to_question(question_id):
     data["answer_id"] = None
     data["edited_count"] = 0
     data['question_id'] = question_id
+    data["user_id"] = data_manager.get_session_user_id(session['user_name'])
     data_manager.add_comment(data)
     return redirect(url_for("question_page", question_id=question_id))
 
@@ -194,6 +197,7 @@ def add_comment_to_answer(answer_id, question_id):
     data["answer_id"] = answer_id
     data["edited_count"] = 0
     data['question_id'] = question_id
+    data["user_id"] = data_manager.get_session_user_id(session['user_name'])
     data_manager.add_comment(data)
     return redirect(url_for("question_page", answer_id=answer_id, question_id=question_id))
 
