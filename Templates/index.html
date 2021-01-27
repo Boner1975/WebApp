@@ -20,11 +20,11 @@
         <p>Logged in as {{ session.user_name }}</p>
         <p><a href="/logout">Log out</a></p>
     {% else %}
-        <br><br>
-        <a href="{{ url_for("registration") }}">Register new account</a>
-        <br>
-        <a href="{{ url_for("login") }}">Log in</a>
-        <br><br>
+
+        <p><a href="{{ url_for("registration") }}">Register new account</a></p>
+
+        <p></p><a href="{{ url_for("login") }}">Log in</a></p>
+
     {% endif %}
     <table border="1">
         {% for header in headers %}
