@@ -18,7 +18,7 @@
 
 <h1>Question id: {{ question_id }}</h1>
     {% for element in tag %}
-        {% if elemen != 'id' %}
+        {% if element != 'id' %}
             {{ element["name"] }}
         {% endif %}
         <a href="{{ url_for("delete_tag", tag_id=element['id'], question_id=question_id) }}" >[X]</a>
