@@ -377,5 +377,11 @@ def logout():
 def is_logged_in():
     return 'user_name' in session
 
+@app.route("/tags")
+def display_tags():
+    tags_list= data_manager.display_tags()
+    return render_template("tags.html", tags_list=tags_list)
+
+
 if __name__ == "__main__":
     app.run()

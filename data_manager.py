@@ -593,3 +593,13 @@ def get_session_user_id(cursor: RealDictCursor, username):
     result = cursor.fetchall()
     return result[0]['user_id']
 
+@connection.connection_handler
+def display_tags(cursor: RealDictCursor):
+    query = """
+        SELECT name, COUNT(tag_id) as amount_of_tag_usage
+        FROM tag left join question_tag qt on tag.id = qt.tag_id
+        GROUP BY name
+        ORDER BY amount_of_tag_usage desc 
+"""
+    cursor.execute(query)
+    return cursor.fetchall()
