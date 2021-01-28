@@ -15,7 +15,7 @@ import connection
 @connection.connection_handler
 def users_list(cursor: RealDictCursor):
     query = """
-    SELECT user_name, registration_date, count_of_asked_questions, count_of_answers, count_of_comments, reputation
+    SELECT user_name, registration_date, reputation
     FROM users
     ORDER BY reputation 
     """
@@ -237,9 +237,6 @@ def add_comment(cursor: RealDictCursor, comment) -> list:
     command = """
     INSERT INTO comment (id, question_id, answer_id, message, submission_time, edited_count, user_id)
     VALUES (%(id)s, %(question_id)s, %(answer_id)s, %(message)s, %(submission_time)s, %(edited_count)s, %(user_id)s);
-    UPDATE  users
-    SET count_of_comments=count_of_comments+1
-    WHERE user_id=%(user_id)s;
     """
 
     param = {
@@ -259,9 +256,6 @@ def add_answer(cursor: RealDictCursor, answer) -> list:
     command = """
     INSERT INTO answer (id, submission_time, vote_number, question_id, message, image, user_id)
     VALUES (%(id)s, %(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s, %(user_id)s);
-    UPDATE  users
-    SET count_of_answers=count_of_answers+1
-    WHERE user_id=%(user_id)s;
     """
 
     param = {
@@ -306,9 +300,7 @@ def add_question(cursor: RealDictCursor, question) -> list:
     command = """
     INSERT INTO question (id, submission_time, view_number, vote_number, title, message, image, user_id)
     VALUES (%(id)s, %(submission_time)s, %(view_number)s, %(vote_number)s, %(title)s, %(message)s, %(image)s, %(user_id)s);
-    UPDATE  users
-    SET count_of_asked_questions=count_of_asked_questions+1
-    WHERE user_id=%(user_id)s;"""
+    """
 
     param = {
         'id': question['id'],
@@ -545,19 +537,14 @@ def get_users(cursor: RealDictCursor):
 @connection.connection_handler
 def add_user(cursor: RealDictCursor, user) -> list:
     command = """
-    INSERT INTO users (user_id, user_name, registration_date, count_of_asked_questions, count_of_answers,
-                count_of_comments, reputation, password)
-    VALUES (%(user_id)s, %(user_name)s, %(registration_date)s, %(count_of_asked_questions)s, %(count_of_answers)s, 
-            %(count_of_comments)s, %(reputation)s, %(password)s);
+    INSERT INTO users (user_id, user_name, registration_date, reputation, password)
+    VALUES (%(user_id)s, %(user_name)s, %(registration_date)s, %(reputation)s, %(password)s);
 """
 
     param = {
         'user_id': user['user_id'],
         'user_name': user['user_name'],
         'registration_date': user['registration_date'],
-        'count_of_asked_questions': user['count_of_asked_questions'],
-        'count_of_answers': user['count_of_answers'],
-        'count_of_comments': user['count_of_comments'],
         'reputation': user['reputation'],
         'password': user['password']
     }
