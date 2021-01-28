@@ -77,17 +77,12 @@
     <thead>
     <tr>
         {% for element in answers_keys %}
-            {% if element != "vote_number" %}
-                {% if element == "message" or element == "image" %}
-                    <th>
-                        {{ element }}
-                    </th>
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-        {% for element in answers_keys %}
-            {% if element == "vote_number" %}
-                <th style="width: 7%">vote number</th>
+            {% if element == "message" or element == "image" %}
+                <th>
+                    {{ element }}
+                </th>
+            {% elif element == 'vote_number' %}
+                <th style="width: 3%">vote number</th>
             {% endif %}
         {% endfor %}
     </tr>

@@ -28,7 +28,17 @@
     {% endif %}
     <table border="1">
         {% for header in headers %}
-            <th>{{ header }}</th>
+            {% if header == "submission_time" %}
+                <th style="width: 5%">submission time</th>
+            {% elif header == "view_number" %}
+                <th style="width: 3%">view number</th>
+            {% elif header == "vote_number" %}
+                <th style="width: 3%">vote number</th>
+            {% else %}
+                <th>
+                    {{ header }}
+                </th>
+            {% endif %}
         {% endfor %}
 
         <tbody>
