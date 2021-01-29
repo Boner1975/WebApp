@@ -15,9 +15,31 @@ import connection
 @connection.connection_handler
 def users_list(cursor: RealDictCursor):
     query = """
-    SELECT user_name, registration_date, reputation
-    FROM users
-    ORDER BY reputation 
+    SELECT user_name, registration_date,count_of_asked_questions,count_of_answers,count_of_comments,
+       reputation
+    FROM
+     users u LEFT JOIN
+     (
+         SELECT a.user_id, COUNT(a.user_id) count_of_answers
+         FROM users
+                  LEFT JOIN answer a on users.user_id = a.user_id
+         GROUP BY a.user_id
+     ) answers on u.user_id = answers.user_id
+     LEFT JOIN
+     (
+         SELECT a.user_id, COUNT(a.user_id) count_of_asked_questions
+         FROM users
+                  LEFT JOIN question a on users.user_id = a.user_id
+         GROUP BY a.user_id
+     ) questions on u.user_id = questions.user_id
+    LEFT JOIN
+    (
+         SELECT a.user_id, COUNT(a.user_id) count_of_comments
+         FROM users
+                  LEFT JOIN comment a on users.user_id = a.user_id
+         GROUP BY a.user_id
+    ) comments on u.user_id = comments.user_id
+    ORDER BY reputation
     """
 
     cursor.execute(query)
