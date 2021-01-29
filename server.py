@@ -338,9 +338,6 @@ def registration():
 
         data['user_id'] = data_manager.greatest_user_id() + 1
         data['registration_date'] = data_manager.submission_time()
-        data['count_of_asked_questions'] = 0
-        data['count_of_answers'] = 0
-        data['count_of_comments'] = 0
         data['reputation'] = 0
         data['password'] = hash_password(data['password'])[0].decode('utf_8')
         data_manager.add_user(data)
