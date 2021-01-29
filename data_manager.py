@@ -15,15 +15,35 @@ import connection
 @connection.connection_handler
 def users_list(cursor: RealDictCursor):
     query = """
-    SELECT user_name, registration_date, count_of_asked_questions, count_of_answers, count_of_comments, reputation
-    FROM users
-    ORDER BY reputation 
+    SELECT user_name, registration_date, count_of_asked_questions, count_of_answers, count_of_comments,
+       reputation
+    FROM
+     users u LEFT JOIN
+     (
+         SELECT a.user_id, COUNT(a.user_id) count_of_answers
+         FROM users
+                  LEFT JOIN answer a on users.user_id = a.user_id
+         GROUP BY a.user_id
+     ) answers on u.user_id = answers.user_id
+     LEFT JOIN
+     (
+         SELECT a.user_id, COUNT(a.user_id) count_of_asked_questions
+         FROM users
+                  LEFT JOIN question a on users.user_id = a.user_id
+         GROUP BY a.user_id
+     ) questions on u.user_id = questions.user_id
+    LEFT JOIN
+    (
+         SELECT a.user_id, COUNT(a.user_id) count_of_comments
+         FROM users
+                  LEFT JOIN comment a on users.user_id = a.user_id
+         GROUP BY a.user_id
+    ) comments on u.user_id = comments.user_id
+    ORDER BY reputation
     """
 
     cursor.execute(query)
     return cursor.fetchall()
-
-
 
 @connection.connection_handler
 def search_result(cursor: RealDictCursor, search_phrase):
@@ -237,11 +257,7 @@ def add_comment(cursor: RealDictCursor, comment) -> list:
     command = """
     INSERT INTO comment (id, question_id, answer_id, message, submission_time, edited_count, user_id)
     VALUES (%(id)s, %(question_id)s, %(answer_id)s, %(message)s, %(submission_time)s, %(edited_count)s, %(user_id)s);
-    UPDATE  users
-    SET count_of_comments=count_of_comments+1
-    WHERE user_id=%(user_id)s;
     """
-
     param = {
         'id': comment['id'],
         'question_id': comment['question_id'],
