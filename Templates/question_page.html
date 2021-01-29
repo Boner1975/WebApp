@@ -11,6 +11,33 @@
     table {
         width: 100%;
     }
+    .button {
+        display: block;
+        width: 115px;
+        height: 25px;
+        background: #4E9CAF;
+        padding: 10px;
+        text-align: center;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        line-height: 25px;
+    }
+    a:link {
+        text-decoration: none;
+    }
+
+    a:visited {
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    a:active {
+        text-decoration: underline;
+    }
 </style>
     {% with search_phrase=search_phrase, request=request %}
         {% include "topnav.html" %}
@@ -144,7 +171,7 @@
              <td>
                 {% if question_user_id == session_user_id %}
 
-                        <a href='{{ url_for('accept_answer', answer_id=answer['id'], question_id=question_id) }}'>ACCEPT</a>
+                        <a class="button" href='{{ url_for('accept_answer', answer_id=answer['id'], question_id=question_id) }}'>ACCEPT</a>
 
 
                 {% endif %}
