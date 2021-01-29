@@ -82,7 +82,7 @@ def submission_time():
 @connection.connection_handler
 def get_question(cursor: RealDictCursor, question_id):
     query = """
-        SELECT title, message, COALESCE(image,'') image
+        SELECT title, message, COALESCE(image,'') image, user_id
         FROM question
         WHERE id = %(question_id)s"""
     param = {'question_id': question_id}
@@ -93,7 +93,7 @@ def get_question(cursor: RealDictCursor, question_id):
 @connection.connection_handler
 def get_answers(cursor: RealDictCursor, question_id):
     query = """
-        SELECT id, message ,COALESCE(image,'') image, vote_number
+        SELECT id, message ,COALESCE(image,'') image, vote_number, accepted
         FROM answer
         WHERE question_id = %(question_id)s
         ORDER BY submission_time"""
@@ -257,8 +257,8 @@ def add_comment(cursor: RealDictCursor, comment) -> list:
 def add_answer(cursor: RealDictCursor, answer) -> list:
     answer_id = greatest_answer_id()
     command = """
-    INSERT INTO answer (id, submission_time, vote_number, question_id, message, image, user_id)
-    VALUES (%(id)s, %(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s, %(user_id)s);
+    INSERT INTO answer (id, submission_time, vote_number, question_id, message, image, user_id, accepted)
+    VALUES (%(id)s, %(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s, %(user_id)s, %(accepted)s);
     UPDATE  users
     SET count_of_answers=count_of_answers+1
     WHERE user_id=%(user_id)s;
@@ -271,7 +271,8 @@ def add_answer(cursor: RealDictCursor, answer) -> list:
         'question_id': answer['question_id'],
         'message': answer['message'],
         'image': answer['image'],
-        'user_id': answer['user_id']
+        'user_id': answer['user_id'],
+        'accepted': answer['accepted']
     }
     cursor.execute(command, param)
 
@@ -603,3 +604,23 @@ def display_tags(cursor: RealDictCursor):
 """
     cursor.execute(query)
     return cursor.fetchall()
+
+@connection.connection_handler
+def get_user_id_by_question_id(cursor: RealDictCursor, question_id):
+    query = """
+        SELECT user_id
+        FROM question
+        where question.id =%(question_id)s"""
+    param = {"question_id": question_id}
+    cursor.execute(query, param)
+    result = cursor.fetchall()
+    return result[0]['user_id']
+
+@connection.connection_handler
+def accept_answer(cursor: RealDictCursor, answer_id):
+    query="""
+            UPDATE answer
+            SET accepted = True
+            WHERE id = %(answer_id)s"""
+    param = {'answer_id': answer_id}
+    cursor.execute(query, param)

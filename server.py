@@ -60,11 +60,14 @@ def question_page(question_id):
     tag = data_manager.get_tags_by_question_id(question_id)
     dictionary_keys = []
     comments_keys = ['message', 'submission_time', 'edited_count']
+    question_user_id = data_manager.get_user_id_by_question_id(question_id)
+    session_user_id = data_manager.get_session_user_id(session['user_name'])
     if len(answers) > 0:
         dictionary_keys = answers[0].keys()
     return render_template("question_page.html", question=question, question_id=question_id,
                            answers=answers,  answers_keys=dictionary_keys, comments=comments,
-                           comments_keys=comments_keys, tag=tag)
+                           comments_keys=comments_keys, tag=tag, question_user_id=question_user_id,
+                           session_user_id=session_user_id)
 
 
 @app.route("/list/add-question", methods=["GET"])
@@ -134,6 +137,7 @@ def add_user_answer_post(question_id):
         data['question_id'] = question_id
         data["image"] = ""
         data["user_id"] = data_manager.get_session_user_id(session['user_name'])
+        data["accepted"] = False
 
         uploaded_file = request.files['image']
         if uploaded_file.filename != '':
@@ -381,6 +385,11 @@ def is_logged_in():
 def display_tags():
     tags_list= data_manager.display_tags()
     return render_template("tags.html", tags_list=tags_list)
+
+@app.route("/answer/<answer_id>/<question_id>/accept_answer")
+def accept_answer(answer_id, question_id):
+    data_manager.accept_answer(answer_id)
+    return redirect(url_for("question_page", question_id=question_id))
 
 
 if __name__ == "__main__":
