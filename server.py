@@ -385,7 +385,11 @@ def display_tags():
 
 @app.route("/answer/<answer_id>/<question_id>/accept_answer")
 def accept_answer(answer_id, question_id):
-    data_manager.accept_answer(answer_id)
+    answer = data_manager.get_answer(answer_id)
+    if answer['accepted'] == False:
+        data_manager.accept_answer(answer_id)
+    else:
+        data_manager.remove_accept(answer_id)
     return redirect(url_for("question_page", question_id=question_id))
 
 

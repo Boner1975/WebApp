@@ -130,7 +130,7 @@ def get_comment(cursor: RealDictCursor, comment_id):
 @connection.connection_handler
 def get_answer(cursor: RealDictCursor, answer_id):
     query = """
-        SELECT id, message ,COALESCE(image,'') image, vote_number, question_id
+        SELECT id, message ,COALESCE(image,'') image, vote_number, question_id, accepted
         FROM answer
         WHERE id = %(answer_id)s
         ORDER BY submission_time"""
@@ -614,3 +614,13 @@ def accept_answer(cursor: RealDictCursor, answer_id):
             WHERE id = %(answer_id)s"""
     param = {'answer_id': answer_id}
     cursor.execute(query, param)
+
+@connection.connection_handler
+def remove_accept(cursor: RealDictCursor, answer_id):
+    query="""
+            UPDATE answer
+            SET accepted = False
+            WHERE id = %(answer_id)s"""
+    param = {'answer_id': answer_id}
+    cursor.execute(query, param)
+
