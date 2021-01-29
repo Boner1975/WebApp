@@ -1,6 +1,7 @@
         body {
             background-color: lightgray;
-            margin:0px;
+            margin-left:200px;
+            margin-right:200px
         }
 
         .topnav {

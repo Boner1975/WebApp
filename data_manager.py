@@ -257,8 +257,8 @@ def add_comment(cursor: RealDictCursor, comment) -> list:
 def add_answer(cursor: RealDictCursor, answer) -> list:
     answer_id = greatest_answer_id()
     command = """
-    INSERT INTO answer (id, submission_time, vote_number, question_id, message, image, user_id)
-    VALUES (%(id)s, %(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s, %(user_id)s);
+    INSERT INTO answer (id, submission_time, vote_number, question_id, message, image, user_id, accepted)
+    VALUES (%(id)s, %(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s, %(user_id)s, %(accepted)s);
     """
 
     param = {
