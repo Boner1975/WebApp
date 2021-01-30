@@ -169,7 +169,7 @@
                 {% endfor %}
             </td>
              <td>
-                {% if question_user_id == session_user_id %}
+                {% if question_user_id == session_user_id and nologin == False %}
 
                         <a class="button" href='{{ url_for('accept_answer', answer_id=answer['id'], question_id=question_id) }}'>ACCEPT</a>
 

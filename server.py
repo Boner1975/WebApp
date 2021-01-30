@@ -60,23 +60,32 @@ def question_page(question_id):
     tag = data_manager.get_tags_by_question_id(question_id)
     dictionary_keys = []
     comments_keys = ['message', 'submission_time', 'edited_count']
-    question_user_id = data_manager.get_user_id_by_question_id(question_id)
-    session_user_id = data_manager.get_session_user_id(session['user_name'])
     if len(answers) > 0:
         dictionary_keys = answers[0].keys()
-    return render_template("question_page.html", question=question, question_id=question_id,
-                           answers=answers,  answers_keys=dictionary_keys, comments=comments,
-                           comments_keys=comments_keys, tag=tag, question_user_id=question_user_id,
-                           session_user_id=session_user_id)
+    if is_logged_in():
+        question_user_id = data_manager.get_user_id_by_question_id(question_id)
+        session_user_id = data_manager.get_session_user_id(session['user_name'])
+        return render_template("question_page.html", question=question, question_id=question_id,
+                               answers=answers,  answers_keys=dictionary_keys, comments=comments,
+                               comments_keys=comments_keys, tag=tag, question_user_id=question_user_id,
+                               session_user_id=session_user_id, nologin=False)
+    else:
+        return render_template("question_page.html", question=question, question_id=question_id,
+                               answers=answers,  answers_keys=dictionary_keys, comments=comments,
+                               comments_keys=comments_keys, tag=tag, nologin=True)
 
 
 @app.route("/list/add-question", methods=["GET"])
 def add_question_get():
+    if not is_logged_in():
+        return redirect(url_for('display_question'))
     return render_template("edit_question.html", question=None)
 
 
 @app.route("/list/add-question", methods=["POST"])
 def add_question_post():
+    if not is_logged_in():
+        return redirect(url_for('display_question'))
     data = dict(request.form)
     data["id"] = data_manager.greatest_id()+1
     data["submission_time"] = data_manager.submission_time()
@@ -100,6 +109,8 @@ def add_question_post():
 
 @app.route("/question/<question_id>/edit", methods=["GET"])
 def edit_question_get(question_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     if not question_id.isnumeric():
         return redirect(url_for("display_question"))
     # question_id = int(question_id)
@@ -113,6 +124,8 @@ def edit_question_get(question_id):
 
 @app.route("/question/<question_id>/edit", methods=["POST"])
 def edit_question_post(question_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     data = dict(request.form)
 
     data_manager.update_question(data)
@@ -128,6 +141,8 @@ def question_delete(question_id):
 
 @app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
 def add_user_answer_post(question_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     if request.method == "POST":
         data = dict(request.form)
         data["id"] = data_manager.greatest_answer_id() + 1
@@ -156,6 +171,8 @@ def add_user_answer_post(question_id):
 
 @app.route("/question/<question_id>/new-comment", methods=["GET", "POST"])
 def add_comment_to_question(question_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     if request.method == "GET":
         return render_template("comment.html", question_id=question_id, comment=None)
     data = dict(request.form)
@@ -171,15 +188,17 @@ def add_comment_to_question(question_id):
 
 @app.route("/comment/<comment_id>/edit", methods=["GET"])
 def edit_comment_to_question(comment_id):
-
     comment = data_manager.get_comment(comment_id)
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=comment["question_id"]))
 
     return render_template("comment.html", comment=comment, comment_id=comment_id, question_id=comment["question_id"])
 
 
 @app.route("/comment/<comment_id>/<question_id>/edit", methods=["POST"])
 def edit_comment_to_question_post(comment_id, question_id):
-
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     data = dict(request.form)
     data['submission_time'] = data_manager.submission_time()
     data['id'] = comment_id
@@ -193,6 +212,8 @@ def edit_comment_to_question_post(comment_id, question_id):
 
 @app.route("/answer/<answer_id>/<question_id>/new-comment", methods=["GET", "POST"])
 def add_comment_to_answer(answer_id, question_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     if request.method == "GET":
         return render_template("comment_answer.html", answer_id=answer_id, question_id=question_id, comment=None)
     data = dict(request.form)
@@ -208,15 +229,16 @@ def add_comment_to_answer(answer_id, question_id):
 
 @app.route("/comment/<comment_id>/edit", methods=["GET"])
 def edit_comment_to_answer(comment_id):
-
     comment = data_manager.get_comment(comment_id)
-
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=comment['question_id']))
     return render_template("comment_answer.html", comment=comment, comment_id=comment_id, answer_id=comment['answer_id'], question_id=comment["question_id"])
 
 
 @app.route("/comment/<comment_id>/<answer_id>/<question_id>/edit", methods=["POST"])
 def edit_comment_to_answer_post(comment_id, answer_id, question_id):
-
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     data = dict(request.form)
     data['submission_time'] = data_manager.submission_time()
     data['id'] = comment_id
@@ -230,9 +252,12 @@ def edit_comment_to_answer_post(comment_id, answer_id, question_id):
 
 @app.route("/answer/<answer_id>/edit", methods=["GET"])
 def edit_answer_get(answer_id):
+    answer = data_manager.get_answer(answer_id)
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=answer['question_id']))
     if not answer_id.isnumeric():
         return redirect(url_for("display_question"))
-    answer = data_manager.get_answer(answer_id)
+
 
     if answer is None:
         return redirect(url_for('display_question'))
@@ -242,6 +267,8 @@ def edit_answer_get(answer_id):
 
 @app.route("/answer/<answer_id>/<question_id>/edit", methods=["POST"])
 def edit_answer_post(answer_id, question_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     data = dict(request.form)
 
     data_manager.update_answer(data)
@@ -263,24 +290,32 @@ def delete_comment(question_id, comment_id):
 
 @app.route("/question/<question_id>/vote_up")
 def question_vote_up(question_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     data_manager.question_vote_up(question_id)
     return redirect(url_for("display_question"))
 
 
 @app.route("/question/<question_id>/vote_down")
 def question_vote_down(question_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     data_manager.question_vote_down(question_id)
     return redirect(url_for("display_question"))
 
 
 @app.route("/answer/<answer_id>/<question_id>/vote_up")
 def answer_vote_up(answer_id, question_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     data_manager.answer_vote_up(answer_id)
     return redirect(url_for("question_page", question_id=question_id))
 
 
 @app.route("/answer/<answer_id>/<question_id>/vote_down")
 def answer_vote_down(answer_id, question_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     data_manager.answer_vote_down(answer_id)
     return redirect(url_for("question_page", question_id=question_id))
 
@@ -294,6 +329,8 @@ def search_question():
 
 @app.route("/question/<question_id>/new-tag", methods=["GET", "POST"])
 def add_tag_to_question(question_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     if request.method == "GET":
         tags=data_manager.get_all_tags()
         return render_template("tag.html", question_id=question_id, tag=None, tags=tags, message = "")
