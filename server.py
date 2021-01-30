@@ -135,6 +135,8 @@ def edit_question_post(question_id):
 
 @app.route("/question/<question_id>/delete")
 def question_delete(question_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     data_manager.delete_question(question_id)
     return redirect(url_for("display_question"))
 
@@ -278,12 +280,16 @@ def edit_answer_post(answer_id, question_id):
 
 @app.route("/question/<question_id>/answer/<answer_id>/delete")
 def delete_answer(question_id, answer_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     data_manager.delete_answer(answer_id)
     return redirect(url_for("question_page", question_id=question_id))
 
 
 @app.route("/question/<question_id>/comment/<comment_id>/delete")
 def delete_comment(question_id, comment_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     data_manager.delete_comment(comment_id)
     return redirect(url_for("question_page", question_id=question_id))
 
@@ -324,6 +330,7 @@ def answer_vote_down(answer_id, question_id):
 def search_question():
     search_phrase = request.args.get('search_phrase')
     search = data_manager.search_result(search_phrase)
+
     return render_template("search_result.html", search_phrase=search_phrase, search=search)
 
 
@@ -355,6 +362,8 @@ def add_tag_to_question(question_id):
 
 @app.route("/question/<question_id>/tag/<tag_id>/delete")
 def delete_tag(question_id, tag_id):
+    if not is_logged_in():
+        return redirect(url_for('question_page', question_id=question_id))
     data_manager.delete_tag(tag_id)
     return redirect(url_for("question_page", question_id=question_id))
 
