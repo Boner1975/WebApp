@@ -534,6 +534,7 @@ def sort_dictionaries(cursor: RealDictCursor, header, direction):
     questions = cursor.fetchall()
     return util.sort_dictionaries(questions, header, direction)
 
+
 @connection.connection_handler
 def get_users(cursor: RealDictCursor):
     query = """
@@ -541,6 +542,7 @@ def get_users(cursor: RealDictCursor):
         FROM users"""
     cursor.execute(query)
     return cursor.fetchall()
+
 
 @connection.connection_handler
 def add_user(cursor: RealDictCursor, user) -> list:
@@ -562,6 +564,7 @@ def add_user(cursor: RealDictCursor, user) -> list:
         'password': user['password']
     }
     cursor.execute(command, param)
+
 
 @connection.connection_handler
 def get_users(cursor: RealDictCursor):

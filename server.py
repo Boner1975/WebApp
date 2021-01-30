@@ -17,6 +17,11 @@ def main_page():
     return render_template("index.html", headers=headers, questions=questions, request=request)
 
 
+@app.route("/user")
+def user_page():
+    return render_template("user_page.html")
+
+
 @app.route("/about")
 def about():
     return render_template("about.html")
