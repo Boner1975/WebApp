@@ -15,7 +15,7 @@ import connection
 @connection.connection_handler
 def users_list(cursor: RealDictCursor):
     query = """
-    SELECT user_name, registration_date, count_of_asked_questions, count_of_answers, count_of_comments,
+    SELECT user_name, registration_date, COALESCE(count_of_asked_questions, 0) count_of_asked_questions, COALESCE(count_of_answers, 0) count_of_answers, COALESCE(count_of_comments, 0) count_of_comments,
        reputation
     FROM
      users u LEFT JOIN
@@ -428,7 +428,8 @@ def answer_vote_up(cursor: RealDictCursor, answer_id):
     query = """
     UPDATE answer
     SET vote_number = vote_number + 1
-    WHERE id = %(answer_id)s"""
+    WHERE id = %(answer_id)s;
+    """
 
     param = {'answer_id': answer_id}
     cursor.execute(query, param)
