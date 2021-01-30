@@ -11,6 +11,33 @@
     table {
         width: 100%;
     }
+    .button {
+        display: block;
+        width: 115px;
+        height: 25px;
+        background: #4E9CAF;
+        padding: 10px;
+        text-align: center;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        line-height: 25px;
+    }
+    a:link {
+        text-decoration: none;
+    }
+
+    a:visited {
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    a:active {
+        text-decoration: underline;
+    }
 </style>
     {% with search_phrase=search_phrase, request=request %}
         {% include "topnav.html" %}
@@ -93,7 +120,11 @@
             {% for element in answers_keys %}
                 {% if element != "vote_number" %}
                     {% if element == "message" %}
-                        <td style="text-align:center">{{ answer[element] }}</td>
+                        {%  if answer['accepted'] == False %}
+                            <td style="text-align:center">{{ answer[element] }}</td>
+                        {% else %}
+                            <td bgcolor="aqua" style="text-align:center">{{ answer[element] }}</td>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             {% endfor %}
@@ -119,26 +150,33 @@
             <td>
                 <a href="{{ url_for("add_comment_to_answer", answer_id=answer['id'], question_id=question_id) }}">Add comment</a>
             </td>
-    <td>
-        {% for comment in comments %}
-                {% if comment['answer_id'] == answer['id']  %}
-                    <p>
+            <td>
+                {% for comment in comments %}
+                    {% if comment['answer_id'] == answer['id']  %}
+                        <p>
 
-                    {% for element in comments_keys %}
-                            <span>
-                                {% if element != '' %}
-                                    {{ comment[element] }}
-                                {% endif %}
-                    {% endfor %}
-                            <a href="{{ url_for('edit_comment_to_answer', comment_id=comment['id'], answer_id=answer_id) }}">EDIT</a>
-                            <a href="{{ url_for("delete_comment", comment_id=comment['id'], question_id=question_id) }}">DELETE</a>
-                            </span>
-                    </p>
+                            {% for element in comments_keys %}
+                                <span>
+                                    {% if element != '' %}
+                                        {{ comment[element] }}
+                                    {% endif %}
+                            {% endfor %}
+                                <a href="{{ url_for('edit_comment_to_answer', comment_id=comment['id'], answer_id=answer_id) }}">EDIT</a>
+                                <a href="{{ url_for("delete_comment", comment_id=comment['id'], question_id=question_id) }}">DELETE</a>
+                                </span>
+                        </p>
+                    {% endif %}
+                {% endfor %}
+            </td>
+             <td>
+                {% if question_user_id == session_user_id and nologin == False %}
+
+                        <a class="button" href='{{ url_for('accept_answer', answer_id=answer['id'], question_id=question_id) }}'>ACCEPT</a>
+
+
                 {% endif %}
-            {% endfor %}
-        </td>
+             </td>
     {% endfor %}
-
         </tr>
     </tbody>
 </table>

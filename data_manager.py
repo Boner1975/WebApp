@@ -15,15 +15,35 @@ import connection
 @connection.connection_handler
 def users_list(cursor: RealDictCursor):
     query = """
-    SELECT user_name, registration_date, count_of_asked_questions, count_of_answers, count_of_comments, reputation
-    FROM users
-    ORDER BY reputation 
+    SELECT user_name, registration_date, count_of_asked_questions, count_of_answers, count_of_comments,
+       reputation
+    FROM
+     users u LEFT JOIN
+     (
+         SELECT a.user_id, COUNT(a.user_id) count_of_answers
+         FROM users
+                  LEFT JOIN answer a on users.user_id = a.user_id
+         GROUP BY a.user_id
+     ) answers on u.user_id = answers.user_id
+     LEFT JOIN
+     (
+         SELECT a.user_id, COUNT(a.user_id) count_of_asked_questions
+         FROM users
+                  LEFT JOIN question a on users.user_id = a.user_id
+         GROUP BY a.user_id
+     ) questions on u.user_id = questions.user_id
+    LEFT JOIN
+    (
+         SELECT a.user_id, COUNT(a.user_id) count_of_comments
+         FROM users
+                  LEFT JOIN comment a on users.user_id = a.user_id
+         GROUP BY a.user_id
+    ) comments on u.user_id = comments.user_id
+    ORDER BY reputation
     """
 
     cursor.execute(query)
     return cursor.fetchall()
-
-
 
 @connection.connection_handler
 def search_result(cursor: RealDictCursor, search_phrase):
@@ -82,7 +102,7 @@ def submission_time():
 @connection.connection_handler
 def get_question(cursor: RealDictCursor, question_id):
     query = """
-        SELECT title, message, COALESCE(image,'') image
+        SELECT title, message, COALESCE(image,'') image, user_id
         FROM question
         WHERE id = %(question_id)s"""
     param = {'question_id': question_id}
@@ -93,7 +113,7 @@ def get_question(cursor: RealDictCursor, question_id):
 @connection.connection_handler
 def get_answers(cursor: RealDictCursor, question_id):
     query = """
-        SELECT id, message ,COALESCE(image,'') image, vote_number
+        SELECT id, message ,COALESCE(image,'') image, vote_number, accepted
         FROM answer
         WHERE question_id = %(question_id)s
         ORDER BY submission_time"""
@@ -130,7 +150,7 @@ def get_comment(cursor: RealDictCursor, comment_id):
 @connection.connection_handler
 def get_answer(cursor: RealDictCursor, answer_id):
     query = """
-        SELECT id, message ,COALESCE(image,'') image, vote_number, question_id
+        SELECT id, message ,COALESCE(image,'') image, vote_number, question_id, accepted
         FROM answer
         WHERE id = %(answer_id)s
         ORDER BY submission_time"""
@@ -237,11 +257,7 @@ def add_comment(cursor: RealDictCursor, comment) -> list:
     command = """
     INSERT INTO comment (id, question_id, answer_id, message, submission_time, edited_count, user_id)
     VALUES (%(id)s, %(question_id)s, %(answer_id)s, %(message)s, %(submission_time)s, %(edited_count)s, %(user_id)s);
-    UPDATE  users
-    SET count_of_comments=count_of_comments+1
-    WHERE user_id=%(user_id)s;
     """
-
     param = {
         'id': comment['id'],
         'question_id': comment['question_id'],
@@ -257,11 +273,8 @@ def add_comment(cursor: RealDictCursor, comment) -> list:
 def add_answer(cursor: RealDictCursor, answer) -> list:
     answer_id = greatest_answer_id()
     command = """
-    INSERT INTO answer (id, submission_time, vote_number, question_id, message, image, user_id)
-    VALUES (%(id)s, %(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s, %(user_id)s);
-    UPDATE  users
-    SET count_of_answers=count_of_answers+1
-    WHERE user_id=%(user_id)s;
+    INSERT INTO answer (id, submission_time, vote_number, question_id, message, image, user_id, accepted)
+    VALUES (%(id)s, %(submission_time)s, %(vote_number)s, %(question_id)s, %(message)s, %(image)s, %(user_id)s, %(accepted)s);
     """
 
     param = {
@@ -271,7 +284,8 @@ def add_answer(cursor: RealDictCursor, answer) -> list:
         'question_id': answer['question_id'],
         'message': answer['message'],
         'image': answer['image'],
-        'user_id': answer['user_id']
+        'user_id': answer['user_id'],
+        'accepted': answer['accepted']
     }
     cursor.execute(command, param)
 
@@ -306,9 +320,7 @@ def add_question(cursor: RealDictCursor, question) -> list:
     command = """
     INSERT INTO question (id, submission_time, view_number, vote_number, title, message, image, user_id)
     VALUES (%(id)s, %(submission_time)s, %(view_number)s, %(vote_number)s, %(title)s, %(message)s, %(image)s, %(user_id)s);
-    UPDATE  users
-    SET count_of_asked_questions=count_of_asked_questions+1
-    WHERE user_id=%(user_id)s;"""
+    """
 
     param = {
         'id': question['id'],
@@ -534,7 +546,6 @@ def sort_dictionaries(cursor: RealDictCursor, header, direction):
     questions = cursor.fetchall()
     return util.sort_dictionaries(questions, header, direction)
 
-
 @connection.connection_handler
 def get_users(cursor: RealDictCursor):
     query = """
@@ -543,28 +554,21 @@ def get_users(cursor: RealDictCursor):
     cursor.execute(query)
     return cursor.fetchall()
 
-
 @connection.connection_handler
 def add_user(cursor: RealDictCursor, user) -> list:
     command = """
-    INSERT INTO users (user_id, user_name, registration_date, count_of_asked_questions, count_of_answers,
-                count_of_comments, reputation, password)
-    VALUES (%(user_id)s, %(user_name)s, %(registration_date)s, %(count_of_asked_questions)s, %(count_of_answers)s, 
-            %(count_of_comments)s, %(reputation)s, %(password)s);
+    INSERT INTO users (user_id, user_name, registration_date, reputation, password)
+    VALUES (%(user_id)s, %(user_name)s, %(registration_date)s, %(reputation)s, %(password)s);
 """
 
     param = {
         'user_id': user['user_id'],
         'user_name': user['user_name'],
         'registration_date': user['registration_date'],
-        'count_of_asked_questions': user['count_of_asked_questions'],
-        'count_of_answers': user['count_of_answers'],
-        'count_of_comments': user['count_of_comments'],
         'reputation': user['reputation'],
         'password': user['password']
     }
     cursor.execute(command, param)
-
 
 @connection.connection_handler
 def get_users(cursor: RealDictCursor):
@@ -606,3 +610,33 @@ def display_tags(cursor: RealDictCursor):
 """
     cursor.execute(query)
     return cursor.fetchall()
+
+@connection.connection_handler
+def get_user_id_by_question_id(cursor: RealDictCursor, question_id):
+    query = """
+        SELECT user_id
+        FROM question
+        where question.id =%(question_id)s"""
+    param = {"question_id": question_id}
+    cursor.execute(query, param)
+    result = cursor.fetchall()
+    return result[0]['user_id']
+
+@connection.connection_handler
+def accept_answer(cursor: RealDictCursor, answer_id):
+    query="""
+            UPDATE answer
+            SET accepted = True
+            WHERE id = %(answer_id)s"""
+    param = {'answer_id': answer_id}
+    cursor.execute(query, param)
+
+@connection.connection_handler
+def remove_accept(cursor: RealDictCursor, answer_id):
+    query="""
+            UPDATE answer
+            SET accepted = False
+            WHERE id = %(answer_id)s"""
+    param = {'answer_id': answer_id}
+    cursor.execute(query, param)
+

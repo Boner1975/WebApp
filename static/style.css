@@ -1,6 +1,7 @@
         body {
             background-color: lightgray;
-            margin:0px;
+            margin-left:200px;
+            margin-right:200px
         }
 
         .topnav {
@@ -16,6 +17,15 @@
           color: #f2f2f2;
           text-align: center;
           padding: 14px 16px;
+          text-decoration: none;
+          font-size: 17px;
+        }
+
+        .topnav div {
+          float: right;
+          color: white;
+          text-align: center;
+          padding: 0px 16px;
           text-decoration: none;
           font-size: 17px;
         }
