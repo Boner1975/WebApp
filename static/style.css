@@ -36,8 +36,8 @@
         }
 
         .topnav a.active {
-            background: linear-gradient(45deg,#4099ff,#73b4ff);
-            color: white;
+          background-color: darkgoldenrod;
+          color: white;
         }
 
         .topnav .search-container {
