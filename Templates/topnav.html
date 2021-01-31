@@ -6,10 +6,12 @@
         <a {% if request.endpoint == "display_tags" %} class="active" {% endif %} href="{{ url_for("display_tags") }}">Tags</a>
         <a {% if request.endpoint == "about" %} class="active" {% endif %} href="{{ url_for("about") }}"><i class="fa fa-building" aria-hidden="true"></i>About</a>
         {% if session.user_name %}
-            <div style="float: right; padding: 14px 16px 16px" ><i class="fa fa-user-circle" aria-hidden="true"></i>{{ session.user_name }}</div>
+            <div style="float: right">
+                <a {% if request.endpoint == "user" %} class="active" {% endif %} href="{{ url_for("user_page") }}"><i class="fa fa-user-circle" aria-hidden="true"></i>{{ session.user_name }}</a>
+            </div>
             <a style="float: right "{% if request.endpoint == "logout" %} class="active" {% endif %} href="/logout">Log out</a>
         {% else %}
-            <a style="float: right" {% if request.endpoint == "register" %} class="active" {% endif %} href="{{ url_for("registration") }}">Register</a>
+            <a style="float: right" {% if request.endpoint == "registration" %} class="active" {% endif %} href="{{ url_for("registration") }}">Register</a>
             <a style="float: right" {% if request.endpoint == "login" %} class="active" {% endif %} href="{{ url_for("login") }}">LogIn</a>
         {% endif %}
         <div class="search-container">
