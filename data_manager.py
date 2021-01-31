@@ -402,47 +402,63 @@ def delete_comment(cursor: RealDictCursor, comment_id):
 
 
 @connection.connection_handler
-def question_vote_up(cursor: RealDictCursor, question_id):
+def question_vote_up(cursor: RealDictCursor, question_id, user_id):
     query = """
         UPDATE question
         SET vote_number = vote_number + 1
-        WHERE id = %(question_id)s"""
+        WHERE id = %(question_id)s;
+        UPDATE users
+        SET reputation = reputation + 5
+        WHERE user_id = %(user_id)s"""
 
-    param = {'question_id': question_id}
+    param = {'question_id': question_id,
+             'user_id' : user_id}
     cursor.execute(query, param)
 
 
 @connection.connection_handler
-def question_vote_down(cursor: RealDictCursor, question_id):
+def question_vote_down(cursor: RealDictCursor, question_id, user_id):
     query = """
         UPDATE question
         SET vote_number = vote_number - 1
-        WHERE id = %(question_id)s"""
+        WHERE id = %(question_id)s;
+        UPDATE users
+        SET reputation = reputation - 2
+        WHERE user_id = %(user_id)s"""
 
-    param = {'question_id': question_id}
+    param = {'question_id': question_id,
+             'user_id' : user_id}
     cursor.execute(query, param)
 
 
 @connection.connection_handler
-def answer_vote_up(cursor: RealDictCursor, answer_id):
+def answer_vote_up(cursor: RealDictCursor, answer_id, user_id):
     query = """
     UPDATE answer
     SET vote_number = vote_number + 1
     WHERE id = %(answer_id)s;
+    UPDATE users
+    SET reputation = reputation + 10
+    WHERE user_id = %(user_id)s
     """
 
-    param = {'answer_id': answer_id}
+    param = {'answer_id': answer_id,
+             'user_id' : user_id}
     cursor.execute(query, param)
 
 
 @connection.connection_handler
-def answer_vote_down(cursor: RealDictCursor, answer_id):
+def answer_vote_down(cursor: RealDictCursor, answer_id, user_id):
     query = """
         UPDATE answer
         SET vote_number = vote_number - 1
-        WHERE id = %(answer_id)s"""
+        WHERE id = %(answer_id)s;
+        UPDATE users
+        SET reputation = reputation - 2
+        WHERE user_id = %(user_id)s"""
 
-    param = {'answer_id': answer_id}
+    param = {'answer_id': answer_id,
+             'user_id' : user_id}
     cursor.execute(query, param)
 
 @connection.connection_handler
@@ -624,20 +640,49 @@ def get_user_id_by_question_id(cursor: RealDictCursor, question_id):
     return result[0]['user_id']
 
 @connection.connection_handler
-def accept_answer(cursor: RealDictCursor, answer_id):
+def accept_answer(cursor: RealDictCursor, answer_id, user_id):
     query="""
             UPDATE answer
             SET accepted = True
-            WHERE id = %(answer_id)s"""
-    param = {'answer_id': answer_id}
+            WHERE id = %(answer_id)s;
+            UPDATE users
+            SET reputation = reputation + 15
+            WHERE user_id = %(user_id)s"""
+    param = {'answer_id': answer_id,
+             'user_id' : user_id}
     cursor.execute(query, param)
 
 @connection.connection_handler
-def remove_accept(cursor: RealDictCursor, answer_id):
+def remove_accept(cursor: RealDictCursor, answer_id, user_id):
     query="""
             UPDATE answer
             SET accepted = False
-            WHERE id = %(answer_id)s"""
-    param = {'answer_id': answer_id}
+            WHERE id = %(answer_id)s;
+            UPDATE users
+            SET reputation = reputation - 15
+            WHERE user_id = %(user_id)s"""
+    param = {'answer_id': answer_id,
+             'user_id' : user_id}
     cursor.execute(query, param)
 
+@connection.connection_handler
+def get_user_id_by_question_id(cursor: RealDictCursor, question_id):
+    query = """
+        SELECT user_id
+        FROM question
+        where id = %(question_id)s"""
+    param = {'question_id' : question_id}
+    cursor.execute(query, param)
+    result = cursor.fetchall()
+    return result[0]['user_id']
+
+@connection.connection_handler
+def get_user_id_by_answer_id(cursor: RealDictCursor, answer_id):
+    query = """
+        SELECT user_id
+        FROM answer
+        where id = %(answer_id)s"""
+    param = {'answer_id' : answer_id}
+    cursor.execute(query, param)
+    result = cursor.fetchall()
+    return result[0]['user_id']
