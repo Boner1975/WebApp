@@ -1,26 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Registration</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/bootstrap.css") }}">
+
+    <style>
+        body {
+            min-height: 100vh;
+            background-image: linear-gradient(to top,#30cfd0 0,#330867 100%);
+        }
+
+        .container{
+            padding: 10px;
+        }
+    </style>
 </head>
-<body>
-{% include "topnav.html" %}
-        <h1>Provide data</h1>
-        <form action="{{ url_for("registration") }}" method = "post" enctype = "multipart/form-data">
-            <label for = "user_name">Set username:</label><br>
-            <input name = "user_name" id = "user_name" type = "text" minlength="5" maxlength="100" value="">
-            <br><br>
-            <label for = "password">Set password:</label><br>
-            <input name = "password" id = "password" type="password" minlength="5" maxlength="500"></input>
-            <br><br>
-            <label for = "password1">Confirm password:</label><br>
-            <input name = "password1" id = "password1" type="password" minlength="5" maxlength="500"></input>
-            <br><br>
-            <input type="submit" value="Register">
-            <label name="message">{{ message }}</label>
-        </form>
+<body class="h-100">
+<header>
+    {% include "topnav.html" %}
+</header>
+{#        <h1>Provide data</h1>#}
+{#        <form action="{{ url_for("registration") }}" method = "post" enctype = "multipart/form-data">#}
+{#            <label for = "user_name">Set username:</label><br>#}
+{#            <input name = "user_name" id = "user_name" type = "text" minlength="5" maxlength="100" value="">#}
+{#            <br><br>#}
+{#            <label for = "password">Set password:</label><br>#}
+{#            <input name = "password" id = "password" type="password" minlength="5" maxlength="500"></input>#}
+{#            <br><br>#}
+{#            <label for = "password1">Confirm password:</label><br>#}
+{#            <input name = "password1" id = "password1" type="password" minlength="5" maxlength="500"></input>#}
+{#            <br><br>#}
+{#            <input type="submit" value="Register">#}
+{#            <label name="message">{{ message }}</label>#}
+{#        </form>#}
+
+<div class="container h-100">
+    <div class="row h-100 justify-content-center align-items-center">
+        <div class="col-10 col-md-8 col-lg-6">
+            <div class="bg-white shadow rounded overflow-hidden ">
+                <form class="form-example" action="{{ url_for("registration") }}" method="post" enctype="multipart/form-data">
+                    <h1 style="text-align: center; margin-top: 60px">ASK MATE</h1>
+                    <h4 style="text-align: center">Register</h4>
+                    <br>
+
+                    <div class="form-group col-md-6" style="margin:auto">
+                        <label style="text-align: center" for="username">Username:</label>
+                        <input name="user_name" id="user_name" type="text" minlength="5" maxlength="100" value="" class="form-control username" placeholder="Username...">
+                    </div>
+
+                    <br>
+
+                    <div class="form-group col-md-6" style="margin:auto">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password..." name="password">
+                    </div>
+
+                    <br>
+
+                    <div class="text-center">
+                        <button style="alignment: center; margin-bottom: 60px" type="submit" class="btn btn-outline-primary" value="Login">Login</button>
+                        <label name="message">{{ message }}</label>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

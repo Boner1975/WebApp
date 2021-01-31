@@ -1,5 +1,4 @@
 import os
-
 from flask import Flask, render_template, url_for, request, redirect, abort, session
 import bcrypt
 import data_manager
@@ -17,9 +16,11 @@ def main_page():
     return render_template("index.html", headers=headers, questions=questions, request=request)
 
 
-@app.route("/user")
+@app.route("/user/")
 def user_page():
-    return render_template("user_page.html")
+    session_user_id = data_manager.get_session_user_id(session['user_name'])
+    return render_template("user_page.html", session_user_id=session_user_id)
+
 
 
 @app.route("/about")
@@ -404,6 +405,7 @@ def hash_password(password):
     hashed_password = bcrypt.hashpw(password.encode('UTF-8'), salt)
     return hashed_password, salt
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
@@ -421,22 +423,26 @@ def login():
 
     return render_template('login.html', message=message)
 
+
 def verify_password(plain_text_pswrd, hash_pswrd):
-    #hashed_byte_password = hash_pswrd.encode('UTF-8')
     return bcrypt.checkpw(plain_text_pswrd.encode('UTF-8'), hash_pswrd)
+
 
 @app.route('/logout')
 def logout():
     session.pop('user_name', None)
     return redirect(url_for('main_page'))
 
+
 def is_logged_in():
     return 'user_name' in session
+
 
 @app.route("/tags")
 def display_tags():
     tags_list= data_manager.display_tags()
     return render_template("tags.html", tags_list=tags_list)
+
 
 @app.route("/answer/<answer_id>/<question_id>/accept_answer")
 def accept_answer(answer_id, question_id):

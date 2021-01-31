@@ -11,7 +11,7 @@
             </div>
             <a style="float: right "{% if request.endpoint == "logout" %} class="active" {% endif %} href="/logout">Log out</a>
         {% else %}
-            <a style="float: right" {% if request.endpoint == "register" %} class="active" {% endif %} href="{{ url_for("registration") }}">Register</a>
+            <a style="float: right" {% if request.endpoint == "registration" %} class="active" {% endif %} href="{{ url_for("registration") }}">Register</a>
             <a style="float: right" {% if request.endpoint == "login" %} class="active" {% endif %} href="{{ url_for("login") }}">LogIn</a>
         {% endif %}
         <div class="search-container">
