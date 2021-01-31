@@ -16,7 +16,8 @@
 <body>
 
     {% include ["topnav.html", "style.css"] ignore missing %}
-
+    <h1>Last 5 questions</h1>
+    <br><br>
     <table border="1">
         {% for header in headers %}
             {% if header == "submission_time" %}
