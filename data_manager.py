@@ -623,6 +623,28 @@ def get_user_id_by_question_id(cursor: RealDictCursor, question_id):
     return result[0]['user_id']
 
 @connection.connection_handler
+def get_user_id_by_answer_id(cursor: RealDictCursor, answer_id):
+    query = """
+        SELECT user_id
+        FROM answer
+        where answer.id =%(answer_id)s"""
+    param = {"answer_id": answer_id}
+    cursor.execute(query, param)
+    result = cursor.fetchall()
+    return result[0]['user_id']
+
+@connection.connection_handler
+def get_user_id_by_comment_id(cursor: RealDictCursor, comment_id):
+    query = """
+        SELECT user_id
+        FROM comment
+        where comment.id =%(comment_id)s"""
+    param = {"comment_id": comment_id}
+    cursor.execute(query, param)
+    result = cursor.fetchall()
+    return result[0]['user_id']
+
+@connection.connection_handler
 def accept_answer(cursor: RealDictCursor, answer_id):
     query="""
             UPDATE answer
