@@ -79,7 +79,6 @@ def question_page(question_id):
 def add_question_get():
     if not is_logged_in():
         return redirect(url_for('display_question'))
-
     return render_template("edit_question.html", question=None)
 
 
@@ -194,11 +193,8 @@ def edit_comment_to_question(comment_id):
     comment = data_manager.get_comment(comment_id)
     if not is_logged_in():
         return redirect(url_for('question_page', question_id=comment["question_id"]))
-    session_user_id = data_manager.get_session_user_id(session['user_name'])
-    if session_user_id == comment['user_id']:
-        return render_template("comment.html", comment=comment, comment_id=comment_id, question_id=comment["question_id"])
-    else:
-        return redirect(url_for('question_page', question_id=comment["question_id"]))
+
+    return render_template("comment.html", comment=comment, comment_id=comment_id, question_id=comment["question_id"])
 
 
 @app.route("/comment/<comment_id>/<question_id>/edit", methods=["POST"])
@@ -233,16 +229,12 @@ def add_comment_to_answer(answer_id, question_id):
     return redirect(url_for("question_page", answer_id=answer_id, question_id=question_id))
 
 
-@app.route("/comment/<comment_id>/<answer_id>/edit", methods=["GET"])
-def edit_comment_to_answer(comment_id, answer_id):
+@app.route("/comment/<comment_id>/edit", methods=["GET"])
+def edit_comment_to_answer(comment_id):
     comment = data_manager.get_comment(comment_id)
     if not is_logged_in():
         return redirect(url_for('question_page', question_id=comment['question_id']))
-    session_user_id = data_manager.get_session_user_id(session['user_name'])
-    if session_user_id == comment['user_id']:
-        return render_template("comment_answer.html", comment=comment, comment_id=comment_id, answer_id=answer_id, question_id=comment["question_id"])
-    else:
-        return redirect(url_for('question_page', question_id=comment['question_id']))
+    return render_template("comment_answer.html", comment=comment, comment_id=comment_id, answer_id=comment['answer_id'], question_id=comment["question_id"])
 
 
 @app.route("/comment/<comment_id>/<answer_id>/<question_id>/edit", methods=["POST"])
@@ -263,7 +255,6 @@ def edit_comment_to_answer_post(comment_id, answer_id, question_id):
 @app.route("/answer/<answer_id>/edit", methods=["GET"])
 def edit_answer_get(answer_id):
     answer = data_manager.get_answer(answer_id)
-
     if not is_logged_in():
         return redirect(url_for('question_page', question_id=answer['question_id']))
     if not answer_id.isnumeric():
@@ -272,12 +263,8 @@ def edit_answer_get(answer_id):
 
     if answer is None:
         return redirect(url_for('display_question'))
-    answer_user_id = answer['user_id']
-    session_user_id = data_manager.get_session_user_id(session['user_name'])
-    if answer_user_id == session_user_id:
-        return render_template("answer.html", answer=answer, answer_id = answer_id, question_id = answer["question_id"])
-    else:
-        return redirect(url_for('question_page', question_id=answer['question_id']))
+
+    return render_template("answer.html", answer=answer, answer_id = answer_id, question_id = answer["question_id"])
 
 
 @app.route("/answer/<answer_id>/<question_id>/edit", methods=["POST"])
