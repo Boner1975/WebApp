@@ -116,11 +116,14 @@ def edit_question_get(question_id):
         return redirect(url_for("display_question"))
     # question_id = int(question_id)
     question = data_manager.get_question(question_id)
-
+    session_user_id = data_manager.get_session_user_id(session['user_name'])
+    question_user_id = question[0]['user_id']
     if question is None:
         return redirect(url_for('display_question'))
-
-    return render_template("edit_question.html", question=question[0], question_id = question_id)
+    if question_user_id == session_user_id:
+        return render_template("edit_question.html", question=question[0], question_id = question_id)
+    else:
+        return redirect(url_for('question_page', question_id=question_id))
 
 
 @app.route("/question/<question_id>/edit", methods=["POST"])
@@ -138,9 +141,14 @@ def edit_question_post(question_id):
 def question_delete(question_id):
     if not is_logged_in():
         return redirect(url_for('question_page', question_id=question_id))
-    data_manager.delete_question(question_id)
-    return redirect(url_for("display_question"))
-
+    question = data_manager.get_question(question_id)
+    session_user_id = data_manager.get_session_user_id(session['user_name'])
+    question_user_id = question[0]['user_id']
+    if question_user_id == session_user_id:
+        data_manager.delete_question(question_id)
+        return redirect(url_for("display_question"))
+    else:
+        return redirect(url_for('question_page', question_id=question_id))
 
 @app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
 def add_user_answer_post(question_id):
@@ -295,16 +303,28 @@ def edit_answer_post(answer_id, question_id):
 def delete_answer(question_id, answer_id):
     if not is_logged_in():
         return redirect(url_for('question_page', question_id=question_id))
-    data_manager.delete_answer(answer_id)
-    return redirect(url_for("question_page", question_id=question_id))
+    answer = data_manager.get_answer(answer_id)
+    answer_user_id = answer['user_id']
+    session_user_id = data_manager.get_session_user_id(session['user_name'])
+    if answer_user_id == session_user_id:
+        data_manager.delete_answer(answer_id)
+        return redirect(url_for("question_page", question_id=question_id))
+    else:
+        return redirect(url_for('question_page', question_id=question_id))
 
 
 @app.route("/question/<question_id>/comment/<comment_id>/delete")
 def delete_comment(question_id, comment_id):
     if not is_logged_in():
         return redirect(url_for('question_page', question_id=question_id))
-    data_manager.delete_comment(comment_id)
-    return redirect(url_for("question_page", question_id=question_id))
+    comment = data_manager.get_comment(comment_id)
+    comment_user_id = comment['user_id']
+    session_user_id = data_manager.get_session_user_id(session['user_name'])
+    if comment_user_id == session_user_id:
+        data_manager.delete_comment(comment_id)
+        return redirect(url_for("question_page", question_id=question_id))
+    else:
+        return redirect(url_for('question_page', question_id=question_id))
 
 
 @app.route("/question/<question_id>/vote_up")
@@ -351,34 +371,46 @@ def search_question():
 def add_tag_to_question(question_id):
     if not is_logged_in():
         return redirect(url_for('question_page', question_id=question_id))
-    if request.method == "GET":
-        tags=data_manager.get_all_tags()
-        return render_template("tag.html", question_id=question_id, tag=None, tags=tags, message = "")
-    data = dict(request.form)
-    data["question_id"] = question_id
+    question = data_manager.get_question(question_id)
+    session_user_id = data_manager.get_session_user_id(session['user_name'])
+    question_user_id = question[0]['user_id']
+    if question_user_id == session_user_id:
+        if request.method == "GET":
+            tags=data_manager.get_all_tags()
+            return render_template("tag.html", question_id=question_id, tag=None, tags=tags, message = "")
+        data = dict(request.form)
+        data["question_id"] = question_id
 
-    if data["name"] == "" and data["name_select"] == "":
-        tags = data_manager.get_all_tags()
-        return render_template("tag.html", question_id=question_id, tag=None, tags=tags, message="You haven't choose any tag")
-    elif data["name"] == "":
-        data['name'] = data['name_select']
-        param = data['name']
-        data["tag_id"] = data_manager.get_tag_id_by_name(param)
-        data_manager.add_tag(data)
+        if data["name"] == "" and data["name_select"] == "":
+            tags = data_manager.get_all_tags()
+            return render_template("tag.html", question_id=question_id, tag=None, tags=tags, message="You haven't choose any tag")
+        elif data["name"] == "":
+            data['name'] = data['name_select']
+            param = data['name']
+            data["tag_id"] = data_manager.get_tag_id_by_name(param)
+            data_manager.add_tag(data)
+        else:
+            data['name'] = data['name']
+            data["tag_id"] = data_manager.greatest_tag_id() + 1
+            data["id"] = data_manager.greatest_tag_id() + 1
+            data_manager.add_new_tag(data)
+        return redirect(url_for("question_page", question_id=question_id))
     else:
-        data['name'] = data['name']
-        data["tag_id"] = data_manager.greatest_tag_id() + 1
-        data["id"] = data_manager.greatest_tag_id() + 1
-        data_manager.add_new_tag(data)
-    return redirect(url_for("question_page", question_id=question_id))
+        return redirect(url_for("question_page", question_id=question_id))
 
 
 @app.route("/question/<question_id>/tag/<tag_id>/delete")
 def delete_tag(question_id, tag_id):
     if not is_logged_in():
         return redirect(url_for('question_page', question_id=question_id))
-    data_manager.delete_tag(tag_id)
-    return redirect(url_for("question_page", question_id=question_id))
+    question = data_manager.get_question(question_id)
+    session_user_id = data_manager.get_session_user_id(session['user_name'])
+    question_user_id = question[0]['user_id']
+    if question_user_id == session_user_id:
+        data_manager.delete_tag(tag_id)
+        return redirect(url_for("question_page", question_id=question_id))
+    else:
+        return redirect(url_for('question_page', question_id=question_id))
 
 
 @app.route('/registration', methods=['GET', 'POST'])

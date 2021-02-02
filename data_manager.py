@@ -48,17 +48,20 @@ def users_list(cursor: RealDictCursor):
 @connection.connection_handler
 def search_result(cursor: RealDictCursor, search_phrase):
     query = """
-    SELECT question.title FROM question
+    SELECT question.title, question.id FROM question
     WHERE LOWER(question.title)  LIKE LOWER(%(search_phrase)s)
     UNION
-    SELECT question.message FROM question
+    SELECT question.message, question.id FROM question
     WHERE LOWER(question.message)  LIKE LOWER(%(search_phrase)s)
     UNION
-    SELECT answer.message FROM answer
+    SELECT answer.message, answer.question_id FROM answer
     WHERE LOWER(answer.message)  LIKE LOWER(%(search_phrase)s)
     UNION
-    SELECT comment.message FROM comment
+    SELECT comment.message, comment.question_id FROM comment
     WHERE LOWER(comment.message)  LIKE LOWER(%(search_phrase)s)
+    UNION
+    SELECT tag.name, question_tag.question_id FROM tag, question_tag
+    WHERE LOWER(tag.name) LIKE LOWER(%(search_phrase)s) AND 
     """
     # query = """
     # SELECT  question.title, question.message, answer.message, comment.message
@@ -135,7 +138,7 @@ def get_comments(cursor: RealDictCursor, question_id):
 @connection.connection_handler
 def get_comment(cursor: RealDictCursor, comment_id):
     query = """
-        SELECT id, question_id, answer_id, message, submission_time, edited_count
+        SELECT id, question_id, answer_id, message, submission_time, edited_count, user_id
         FROM comment
         WHERE id = %(comment_id)s
         ORDER BY submission_time"""
@@ -150,7 +153,7 @@ def get_comment(cursor: RealDictCursor, comment_id):
 @connection.connection_handler
 def get_answer(cursor: RealDictCursor, answer_id):
     query = """
-        SELECT id, message ,COALESCE(image,'') image, vote_number, question_id, accepted
+        SELECT id, message ,COALESCE(image,'') image, vote_number, question_id, accepted, user_id
         FROM answer
         WHERE id = %(answer_id)s
         ORDER BY submission_time"""
