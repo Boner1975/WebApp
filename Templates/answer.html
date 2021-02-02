@@ -5,39 +5,85 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Add an answer</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/bootstrap.css") }}">
+
+    <style>
+        body {
+            min-height: 100vh;
+            background-image: linear-gradient(to top,#30cfd0 0,#330867 100%);
+        }
+
+        .container{
+            margin-top: 60px;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div class="topnav">
-      <a href ="{{ url_for("main_page") }}"><i class="fa fa-home" aria-hidden="true"></i></i>Home</a>
-      <a href ="{{ url_for("display_question") }}"><i class="fa fa-list-ol" aria-hidden="true"></i>Questions</a>
-        <a href="{{ url_for("about") }}"><i class="fa fa-list-ol" aria-hidden="true"></i>About</a>
-      <a href="#about">Users</a>
-        <div class="search-container">
-            <form action="{{ url_for("search_question", search_phrase=search_phrase) }}" method="get">
-                <input type="text" placeholder="Search.." name="search_phrase">
-                <button type="submit"><i class="fa fa-search"></i></button>
-            </form>
+<header>
+    {% include "topnav.html" %}
+</header>
+{#    {% if answer == None %}#}
+{#    <h1>Add new answer</h1>#}
+{#    <form action="{{ url_for("add_user_answer_post", question_id=question_id) }}" method="post" enctype = "multipart/form-data">#}
+{#        <label for="message">Answer:</label><br>#}
+{#        <textarea id="message" name="message" minlength="1" maxlength="500"></textarea><br><br>#}
+{#        <p><input type = "file" name = "image" accept = ".png, .jpg"></p>#}
+{#        <p>*Accepted file types: png, jpg</p>#}
+{#        <br><br>#}
+{#        <input type="submit" value="Add answer">#}
+{#    </form>#}
+{#    {% else %}#}
+{#        <h1>Edit an answer</h1>#}
+{#            <form action="{{ url_for("edit_answer_post", answer_id=answer_id, question_id = answer['question_id']) }}" method="post">#}
+{#                <label for = "message">Message</label><br>#}
+{#                <textarea name="message" id="message" minlength="5" maxlength="500">{{ answer['message'] }}</textarea>#}
+{#                <br><br>#}
+{#                <input name="id" id="id" type="hidden" value="{{ answer_id }}">#}
+{#                <input type="submit" value="Update answer">#}
+{#            </form>#}
+{#    {% endif %}#}
+{% if answer == None %}
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-10 col-md-8 col-lg-6">
+                <div class="bg-white shadow rounded overflow-hidden ">
+                        <form action="{{ url_for("add_user_answer_post", question_id=question_id) }}" method="post" enctype="multipart/form-data">
+                            <div class="form-group col-md-6" style="margin: 60px auto 0px auto">
+                                <label for="message">Answer:</label>
+                                <textarea name="message" id="message" class="form-control" minlength="1" rows="3"></textarea>
+                            </div>
+                            <div class="form-group col-md-6" style="margin: 30px auto 0px auto">
+                                <input type = "file" name = "image" accept = ".png, .jpg">
+                                <p>*Accepted file types: png, jpg</p>
+                            </div>
+                            <div class="text-center">
+                                <button style="alignment: center; margin-bottom: 60px; margin-top: 30px" type="submit" class="btn btn-outline-primary" value="Add answer">Add answer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    {% if answer == None %}
-    <h1>Add new answer</h1>
-    <form action="{{ url_for("add_user_answer_post", question_id=question_id) }}" method="post" enctype = "multipart/form-data">
-        <label for="message">Answer:</label><br>
-        <textarea id="message" name="message" minlength="1" maxlength="500"></textarea><br><br>
-        <p><input type = "file" name = "image" accept = ".png, .jpg"></p>
-        <p>*Accepted file types: png, jpg</p>
-        <br><br>
-        <input type="submit" value="Add answer">
-    </form>
-    {% else %}
-        <h1>Edit an answer</h1>
-            <form action="{{ url_for("edit_answer_post", answer_id=answer_id, question_id = answer['question_id']) }}" method="post">
-                <label for = "message">Message</label><br>
-                <textarea name="message" id="message" minlength="5" maxlength="500">{{ answer['message'] }}</textarea>
-                <br><br>
-                <input name="id" id="id" type="hidden" value="{{ answer_id }}">
-                <input type="submit" value="Update answer">
-            </form>
-    {% endif %}
+{% else %}
+        <div class="container h-100">
+            <div class="row h-100 justify-content-center align-items-center">
+                <div class="col-10 col-md-8 col-lg-6">
+                    <div class="bg-white shadow rounded overflow-hidden ">
+                        <form action="{{ url_for("edit_answer_post", answer_id=answer_id, question_id = answer['question_id']) }}" method="post">
+                            <div class="form-group col-md-6" style="margin: 60px auto 30px auto">
+                                <label for="message">Answer:</label>
+                                <textarea class="form-control" name="message" id="message" minlength="1" rows="3">{{ answer['message'] }}</textarea>
+                            </div>
+                            <input name="id" id="id" type="hidden" value="{{ answer_id }}">
+                            <div class="text-center">
+                                <button style="alignment: center; margin-bottom: 60px" type="submit" class="btn btn-outline-primary" value="Update answer">Update answer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endif %}
 </body>
 </html>
