@@ -652,6 +652,7 @@ def accept_answer(cursor: RealDictCursor, answer_id, user_id):
              'user_id' : user_id}
     cursor.execute(query, param)
 
+
 @connection.connection_handler
 def remove_accept(cursor: RealDictCursor, answer_id, user_id):
     query="""
