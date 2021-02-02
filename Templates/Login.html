@@ -22,6 +22,42 @@
 <header>
     {% include "topnav.html" %}
 </header>
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-10 col-md-8 col-lg-6">
+                <div class="bg-white shadow rounded overflow-hidden ">
+                    <form class="form-example" action="{{ url_for("login") }}" method="POST" enctype="multipart/form-data">
+                        <h1 style="text-align: center; margin-top: 60px">ASK MATE</h1>
+                        <h4 style="text-align: center">Login</h4>
+                        <br>
+
+                        <div class="form-group col-md-6" style="margin:auto">
+                            <label style="text-align: center" for="username">Username:</label>
+                            <input name="user_name" id="user_name" type="text" minlength="5" maxlength="100" value="" class="form-control username" placeholder="Username...">
+                        </div>
+
+                        <br>
+
+                        <div class="form-group col-md-6" style="margin:auto">
+                            <label for="password">Password:</label>
+                            <input type="password" class="form-control" id="password" placeholder="Password..." name="password">
+                        </div>
+
+                        <br>
+
+                        <div class="text-center">
+                            <button style="alignment: center; margin-bottom: 60px" type="submit" class="btn btn-outline-primary" value="Login">Login</button>
+                            <label name="message">{{ message }}</label>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
 {#    <div class="col-xl-4 col-md-6 col-sm-10 mx-auto">#}
 {#        <div class="bg-white shadow rounded overflow-hidden">#}
 {#            <div class="card">#}
@@ -65,39 +101,3 @@
 {#            </div>#}
 {#        </div>#}
 {#    </div>#}
-
-<div class="container h-100">
-    <div class="row h-100 justify-content-center align-items-center">
-        <div class="col-10 col-md-8 col-lg-6">
-            <div class="bg-white shadow rounded overflow-hidden ">
-                <form class="form-example" action="{{ url_for("login") }}" method="POST" enctype="multipart/form-data">
-                    <h1 style="text-align: center; margin-top: 60px">ASK MATE</h1>
-                    <h4 style="text-align: center">Login</h4>
-                    <br>
-
-                    <div class="form-group col-md-6" style="margin:auto">
-                        <label style="text-align: center" for="username">Username:</label>
-                        <input name="user_name" id="user_name" type="text" minlength="5" maxlength="100" value="" class="form-control username" placeholder="Username...">
-                    </div>
-
-                    <br>
-
-                    <div class="form-group col-md-6" style="margin:auto">
-                        <label for="password">Password:</label>
-                        <input type="password" class="form-control" id="password" placeholder="Password..." name="password">
-                    </div>
-
-                    <br>
-
-                    <div class="text-center">
-                        <button style="alignment: center; margin-bottom: 60px" type="submit" class="btn btn-outline-primary" value="Login">Login</button>
-                        <label name="message">{{ message }}</label>
-                    </div>
-
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-</body>
-</html>

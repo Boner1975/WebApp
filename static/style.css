@@ -1,7 +1,11 @@
+        /*body {*/
+        /*    background-color: lightgray;*/
+        /*    margin-left:200px;*/
+        /*    margin-right:200px*/
+        /*}*/
         body {
-            background-color: lightgray;
-            margin-left:200px;
-            margin-right:200px
+            min-height: 100vh;
+            background-image: linear-gradient(to top,#30cfd0 0,#330867 100%);
         }
 
         .topnav {
