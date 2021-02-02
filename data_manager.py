@@ -39,7 +39,7 @@ def users_list(cursor: RealDictCursor):
                   LEFT JOIN comment a on users.user_id = a.user_id
          GROUP BY a.user_id
     ) comments on u.user_id = comments.user_id
-    ORDER BY reputation
+    ORDER BY reputation DESC
     """
 
     cursor.execute(query)
