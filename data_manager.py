@@ -639,6 +639,19 @@ def get_user_id_by_question_id(cursor: RealDictCursor, question_id):
     result = cursor.fetchall()
     return result[0]['user_id']
 
+
+@connection.connection_handler
+def get_username_by_user_id(cursor: RealDictCursor, user_id):
+    query = """
+        SELECT user_name
+        FROM users
+        where users.user_id =%(user_id)s"""
+    param = {"user_id": user_id}
+    cursor.execute(query, param)
+    result = cursor.fetchall()
+    return result[0]['user_name']
+
+
 @connection.connection_handler
 def accept_answer(cursor: RealDictCursor, answer_id, user_id):
     query="""
