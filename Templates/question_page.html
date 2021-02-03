@@ -43,7 +43,7 @@
         {% include "topnav.html" %}
     {% endwith %}
 
-<h1>Question id: {{ question_id }}</h1>
+<h1>Added by: {{ username }}</h1>
     {% for element in tag %}
         {% if element != 'id' %}
             {{ element["name"] }}
@@ -53,18 +53,29 @@
 <br><br>
 <table border="1">
     <tbody>
-    {% for ques in question %}
+    {# {% for ques in question %} #}
+
         <tr>
-            {% for element in ques %}
+            {% for element in question %}
+            {# {% for element in ques %} #}
                 <td>
-                {% if element == "image" %}
-                     <a href="{{ url_for('static', filename='uploaded/' + ques["image"]) }}">{{ ques["image"] }}</a>
-                {% else %}
-                    {{ ques.get(element) }}
+                {% if element != 'user_id' %}
+                    {% if element == "image" %}
+                        <a href="{{ url_for('static', filename='uploaded/' + question["image"]) }}">{{ question["image"] }}</a>
+                    {% else %}
+                        {# {{ ques.get(element) }} #}
+                        {{ question[element] }}
+                    {% endif %}
                 {% endif %}
                 </td>
             {% endfor %}
-    {% endfor %}
+    {# {% endfor %} #}
+                <td>
+                    <a href="{{ url_for ("question_vote_up", question_id=question_id) }}">&#128077;</a>
+                </td>
+                <td>
+                    <a href="{{ url_for("question_vote_down", question_id=question_id) }}">&#128078;</a>
+                </td>
                 <td>
                     <a href="{{ url_for("add_comment_to_question", question_id=question_id) }}">Add comment</a>
                 </td>

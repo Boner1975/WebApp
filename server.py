@@ -23,7 +23,6 @@ def user_page():
     return render_template("user_page.html", user_id=user_id)
 
 
-
 @app.route("/about")
 def about():
     return render_template("about.html")
@@ -65,6 +64,7 @@ def question_page(question_id):
     answers = data_manager.get_answers(question_id)
     comments = data_manager.get_comments(question_id)
     tag = data_manager.get_tags_by_question_id(question_id)
+    username = session['user_name']
     dictionary_keys = []
     comments_keys = ['message', 'submission_time', 'edited_count']
     if len(answers) > 0:
@@ -72,12 +72,12 @@ def question_page(question_id):
     if is_logged_in():
         question_user_id = data_manager.get_user_id_by_question_id(question_id)
         session_user_id = data_manager.get_session_user_id(session['user_name'])
-        return render_template("question_page.html", question=question, question_id=question_id,
+        return render_template("question_page.html", question=question[0], question_id=question_id,
                                answers=answers,  answers_keys=dictionary_keys, comments=comments,
                                comments_keys=comments_keys, tag=tag, question_user_id=question_user_id,
-                               session_user_id=session_user_id, nologin=False)
+                               session_user_id=session_user_id, nologin=False, username=username)
     else:
-        return render_template("question_page.html", question=question, question_id=question_id,
+        return render_template("question_page.html", question=question[0], question_id=question_id,
                                answers=answers,  answers_keys=dictionary_keys, comments=comments,
                                comments_keys=comments_keys, tag=tag, nologin=True)
 
@@ -338,7 +338,7 @@ def question_vote_up(question_id):
         return redirect(url_for('question_page', question_id=question_id))
     user_id=data_manager.get_user_id_by_question_id(question_id)
     data_manager.question_vote_up(question_id, user_id)
-    return redirect(url_for("display_question"))
+    return redirect(url_for("question_page", question_id=question_id))
 
 
 @app.route("/question/<question_id>/vote_down")
@@ -347,7 +347,7 @@ def question_vote_down(question_id):
         return redirect(url_for('question_page', question_id=question_id))
     user_id = data_manager.get_user_id_by_question_id(question_id)
     data_manager.question_vote_down(question_id, user_id)
-    return redirect(url_for("display_question"))
+    return redirect(url_for("question_page", question_id=question_id))
 
 
 @app.route("/answer/<answer_id>/<question_id>/vote_up")
