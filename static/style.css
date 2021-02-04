@@ -1,8 +1,4 @@
-        /*body {*/
-        /*    background-color: lightgray;*/
-        /*    margin-left:200px;*/
-        /*    margin-right:200px*/
-        /*}*/
+
         body {
             min-height: 100vh;
             background-image: linear-gradient(to top,#30cfd0 0,#330867 100%);
@@ -40,8 +36,9 @@
         }
 
         .topnav a.active {
-          background-color: darkgoldenrod;
-          color: white;
+            background: rgb(50,47,107);
+            background: linear-gradient(36deg, rgba(50,47,107,1) 0%, rgba(43,43,207,1) 52%, rgba(0,212,255,1) 100%);
+            color: white;
         }
 
         .topnav .search-container {
