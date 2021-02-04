@@ -78,7 +78,7 @@ def question_page(question_id):
                                comments_keys=comments_keys, tag=tag, question_user_id=question_user_id,
                                session_user_id=session_user_id, nologin=False, username=username)
     else:
-        return render_template("question_page.html", question=question[0], question_id=question_id,
+        return render_template("question_page2.html", question=question[0], question_id=question_id,
                                answers=answers,  answers_keys=dictionary_keys, comments=comments,
                                comments_keys=comments_keys, tag=tag, nologin=True)
 
@@ -487,7 +487,7 @@ def is_logged_in():
 @app.route("/tags")
 def display_tags():
     tags_list= data_manager.display_tags()
-    return render_template("tags.html", tags_list=tags_list)
+    return render_template("tags2.html", tags_list=tags_list)
 
 
 @app.route("/answer/<answer_id>/<question_id>/accept_answer")
