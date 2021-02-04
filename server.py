@@ -23,7 +23,6 @@ def user_page():
     return render_template("user_page.html", user_id=user_id)
 
 
-
 @app.route("/about")
 def about():
     return render_template("about.html")
@@ -65,21 +64,23 @@ def question_page(question_id):
     answers = data_manager.get_answers(question_id)
     comments = data_manager.get_comments(question_id)
     tag = data_manager.get_tags_by_question_id(question_id)
+    question_user_id = data_manager.get_user_id_by_question_id(question_id)
+    username = data_manager.get_username_by_user_id(question_user_id)
     dictionary_keys = []
     comments_keys = ['message', 'submission_time', 'edited_count']
     if len(answers) > 0:
         dictionary_keys = answers[0].keys()
     if is_logged_in():
-        question_user_id = data_manager.get_user_id_by_question_id(question_id)
+        #question_user_id = data_manager.get_user_id_by_question_id(question_id)
         session_user_id = data_manager.get_session_user_id(session['user_name'])
-        return render_template("question_page.html", question=question, question_id=question_id,
+        return render_template("question_page2.html", question=question[0], question_id=question_id,
                                answers=answers,  answers_keys=dictionary_keys, comments=comments,
                                comments_keys=comments_keys, tag=tag, question_user_id=question_user_id,
-                               session_user_id=session_user_id, nologin=False)
+                               session_user_id=session_user_id, nologin=False, username=username)
     else:
-        return render_template("question_page.html", question=question, question_id=question_id,
+        return render_template("question_page2.html", question=question[0], question_id=question_id,
                                answers=answers,  answers_keys=dictionary_keys, comments=comments,
-                               comments_keys=comments_keys, tag=tag, nologin=True)
+                               comments_keys=comments_keys, tag=tag, nologin=True, username=username)
 
 
 @app.route("/list/add-question", methods=["GET"])
@@ -137,10 +138,10 @@ def edit_question_post(question_id):
     if not is_logged_in():
         return redirect(url_for('question_page', question_id=question_id))
     data = dict(request.form)
-
+    data['id'] = question_id
     data_manager.update_question(data)
 
-    return redirect(url_for('display_question'))
+    return redirect(url_for('question_page', question_id=question_id))
 
 
 @app.route("/question/<question_id>/delete")
@@ -338,7 +339,7 @@ def question_vote_up(question_id):
         return redirect(url_for('question_page', question_id=question_id))
     user_id=data_manager.get_user_id_by_question_id(question_id)
     data_manager.question_vote_up(question_id, user_id)
-    return redirect(url_for("display_question"))
+    return redirect(url_for("question_page", question_id=question_id))
 
 
 @app.route("/question/<question_id>/vote_down")
@@ -347,7 +348,7 @@ def question_vote_down(question_id):
         return redirect(url_for('question_page', question_id=question_id))
     user_id = data_manager.get_user_id_by_question_id(question_id)
     data_manager.question_vote_down(question_id, user_id)
-    return redirect(url_for("display_question"))
+    return redirect(url_for("question_page", question_id=question_id))
 
 
 @app.route("/answer/<answer_id>/<question_id>/vote_up")
@@ -486,7 +487,7 @@ def is_logged_in():
 @app.route("/tags")
 def display_tags():
     tags_list= data_manager.display_tags()
-    return render_template("tags.html", tags_list=tags_list)
+    return render_template("tags2.html", tags_list=tags_list)
 
 
 @app.route("/answer/<answer_id>/<question_id>/accept_answer")

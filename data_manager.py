@@ -102,7 +102,7 @@ def submission_time():
 @connection.connection_handler
 def get_question(cursor: RealDictCursor, question_id):
     query = """
-        SELECT title, message, COALESCE(image,'') image, user_id
+        SELECT title, message, COALESCE(image,'') image, vote_number, user_id
         FROM question
         WHERE id = %(question_id)s"""
     param = {'question_id': question_id}
@@ -135,7 +135,7 @@ def get_comments(cursor: RealDictCursor, question_id):
 @connection.connection_handler
 def get_comment(cursor: RealDictCursor, comment_id):
     query = """
-        SELECT id, question_id, answer_id, message, submission_time, edited_count
+        SELECT id, question_id, answer_id, message, submission_time, edited_count, user_id
         FROM comment
         WHERE id = %(comment_id)s
         ORDER BY submission_time"""
@@ -150,7 +150,7 @@ def get_comment(cursor: RealDictCursor, comment_id):
 @connection.connection_handler
 def get_answer(cursor: RealDictCursor, answer_id):
     query = """
-        SELECT id, message ,COALESCE(image,'') image, vote_number, question_id, accepted
+        SELECT id, message ,COALESCE(image,'') image, vote_number, question_id, accepted, user_id
         FROM answer
         WHERE id = %(answer_id)s
         ORDER BY submission_time"""
@@ -638,6 +638,19 @@ def get_user_id_by_question_id(cursor: RealDictCursor, question_id):
     cursor.execute(query, param)
     result = cursor.fetchall()
     return result[0]['user_id']
+
+
+@connection.connection_handler
+def get_username_by_user_id(cursor: RealDictCursor, user_id):
+    query = """
+        SELECT user_name
+        FROM users
+        where users.user_id =%(user_id)s"""
+    param = {"user_id": user_id}
+    cursor.execute(query, param)
+    result = cursor.fetchall()
+    return result[0]['user_name']
+
 
 @connection.connection_handler
 def accept_answer(cursor: RealDictCursor, answer_id, user_id):
