@@ -487,7 +487,7 @@ def is_logged_in():
 @app.route("/tags")
 def display_tags():
     tags_list= data_manager.display_tags()
-    return render_template("tags.html", tags_list=tags_list)
+    return render_template("tags2.html", tags_list=tags_list)
 
 
 @app.route("/answer/<answer_id>/<question_id>/accept_answer")
