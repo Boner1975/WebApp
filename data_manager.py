@@ -18,6 +18,7 @@ def user_questions(cursor: RealDictCursor, user_id):
     SELECT id, title, submission_time, message, view_number, vote_number
     FROM question
     WHERE user_id = %(user_id)s"""
+
     param = {'user_id': user_id}
     cursor.execute(query, param)
     return cursor.fetchall()
@@ -26,9 +27,15 @@ def user_questions(cursor: RealDictCursor, user_id):
 @connection.connection_handler
 def user_data(cursor: RealDictCursor, user_id):
     query = """
-    SELECT title, submission_time, message, view_number, vote_number
-    FROM question
-    WHERE user_id = %(user_id)s"""
+    SELECT COUNT(question) as questions FROM question WHERE user_id = %(user_id)s
+    UNION ALL
+    SELECT COUNT(answer) as answrs FROM answer WHERE user_id = %(user_id)s
+    UNION ALL
+    SELECT COUNT(comment) as comments FROM comment WHERE user_id = %(user_id)s
+    UNION ALL
+    SELECT reputation FROM users WHERE user_id = %(user_id)s
+    """
+
     param = {'user_id': user_id}
     cursor.execute(query, param)
     return cursor.fetchall()

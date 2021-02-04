@@ -20,7 +20,8 @@ def main_page():
 def user_page():
     user_id = data_manager.get_session_user_id(session['user_name'])
     user_questions = data_manager.user_questions(user_id)
-    return render_template("user_page.html", user_id=user_id, user_questions=user_questions)
+    user_data = data_manager.user_data(user_id)
+    return render_template("user_page.html", user_id=user_id, user_questions=user_questions, user_data=user_data)
 
 
 @app.route("/about")
