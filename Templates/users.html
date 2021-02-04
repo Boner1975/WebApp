@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Users</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/bootstrap.css") }}">
 
     <style>
 
@@ -30,7 +31,7 @@
         .user-list tbody td .user-link {
             display: block;
             text-align: -moz-left;
-            font-size: 1.25em;
+            font-size: 1em;
             text-align: -moz-center;
             padding-top: 3px;
             margin-left: 60px;
@@ -42,10 +43,7 @@
             table-layout: fixed;
         }
 
-        td{
-            word-wrap:break-word;
 
-        }
 
         .table-hover > tbody > tr:hover > td,
         .table-hover > tbody > tr:hover > th {
