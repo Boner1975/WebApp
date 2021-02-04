@@ -13,14 +13,14 @@ app.secret_key = 'mojsupersekretnyklucz'
 def main_page():
     headers = ['id', 'submission_time', 'view_number', 'title', 'message', 'image', 'vote_number']
     questions = data_manager.display_five_latest_questions()
-    #user_id = data_manager.get_session_user_id(session['user_name'])
-    return render_template("index.html", questions=questions, request=request)#user_id=user_id
+    return render_template("index.html", questions=questions, request=request)
 
 
 @app.route("/user")
 def user_page():
     user_id = data_manager.get_session_user_id(session['user_name'])
-    return render_template("user_page.html", user_id=user_id)
+    user_questions = data_manager.user_questions(user_id)
+    return render_template("user_page.html", user_id=user_id, user_questions=user_questions)
 
 
 @app.route("/about")

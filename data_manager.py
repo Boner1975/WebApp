@@ -13,6 +13,28 @@ import connection
 
 
 @connection.connection_handler
+def user_questions(cursor: RealDictCursor, user_id):
+    query = """
+    SELECT id, title, submission_time, message, view_number, vote_number
+    FROM question
+    WHERE user_id = %(user_id)s"""
+    param = {'user_id': user_id}
+    cursor.execute(query, param)
+    return cursor.fetchall()
+
+
+@connection.connection_handler
+def user_data(cursor: RealDictCursor, user_id):
+    query = """
+    SELECT title, submission_time, message, view_number, vote_number
+    FROM question
+    WHERE user_id = %(user_id)s"""
+    param = {'user_id': user_id}
+    cursor.execute(query, param)
+    return cursor.fetchall()
+
+
+@connection.connection_handler
 def users_list(cursor: RealDictCursor):
     query = """
     SELECT user_name, registration_date, COALESCE(count_of_asked_questions, 0) count_of_asked_questions, COALESCE(count_of_answers, 0) count_of_answers, COALESCE(count_of_comments, 0) count_of_comments,

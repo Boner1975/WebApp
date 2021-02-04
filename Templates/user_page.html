@@ -67,7 +67,7 @@
         {% include "topnav.html" %}
     </header>
 {#    <div class="row py-5 px-4">#}
-        <div class="col-xl-4 col-md-6 col-sm-10 mx-auto">
+        <div class="col-xl-6 col-md-8 col-sm-12 mx-auto">
             <div class="bg-white shadow rounded overflow-hidden">
                 <div class="px-4 pt-0 pb-4 bg-dark">
                     <div class="media align-items-end profile-header">
@@ -93,6 +93,7 @@
                             </div>
                         </div>
                     </div>
+
 
                     <div class="col-md-4">
                         <div class="card bg-c-yellow order-card">
@@ -126,31 +127,18 @@
                 </div>
             </div>
         </div>
+            {% for question in user_questions %}
             <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                <a href="{{ url_for("question_page", question_id=question["id"]) }}" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">Question Title</h5>
-                        <small>data</small>
+                        <h5 class="mb-1">{{ question['title'] }}</h5>
+                        <small>{{ question['submission_time'] }}</small>
                     </div>
-                        <p class="mb-1">Jakiś długi opis pytania które zadał użytkownik. Generalnie to walić CSS i godziny który wymaga. Bootstrap usatował życie</p>
-                        <small>Answers: liczba odpowiedzi</small>
+                        <p class="mb-1">{{ question['message'] }}</p>
+                        <small style="margin-right: 30px"><i class="fa fa-eye" aria-hidden="true"></i>{{ question['view_number'] }}</small>
+                        <small {% if question['vote_number'] >= 0 %} style="color: green" {% else %} style="color: red" {% endif %}><i class="fa fa-balance-scale" aria-hidden="true"></i>{{ question['vote_number'] }}</small>
                 </a>
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                    <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1">Question Title</h5>
-                      <small class="text-muted">data</small>
-                    </div>
-                        <p class="mb-1">Jakiś długi opis pytania które zadał użytkownik. Generalnie to walić CSS i godziny który wymaga. Bootstrap usatował życie</p>
-                        <small class="text-muted">Answers: liczba odpowiedzi</small>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                    <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1">Question Title</h5>
-                      <small class="text-muted">data</small>
-                    </div>
-                        <p class="mb-1">Jakiś długi opis pytania które zadał użytkownik. Generalnie to walić CSS i godziny który wymaga. Bootstrap usatował życie</p>
-                        <small class="text-muted">Answers: liczba odpowiedzi</small>
-                </a>
+                {% endfor %}
             </div>
         </div>
 {#</div>#}
