@@ -652,6 +652,7 @@ def get_username_by_user_id(cursor: RealDictCursor, user_id):
     return result[0]['user_name']
 
 
+
 @connection.connection_handler
 def accept_answer(cursor: RealDictCursor, answer_id, user_id):
     query="""
