@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     {% if question == None %}
         <title>Add new question</title>
     {% else %}
@@ -40,10 +44,12 @@
                                 <label for ="message">Message:</label><br>
                                 <textarea name="message" id="message" class="form-control" minlength="1" rows="3"></textarea>
                             </div>
-                            <div class="form-group col-md-6" style="margin: 30px auto 0px auto; alignment: center">
-                                <input type = "file" name = "file" accept = ".png, .jpg">
-                                 <p>*Accepted file types: png, jpg</p>
+                            <div class="form-group col-md-6 custom-file" style="margin: 30px auto 0px auto; alignment: center; display: block !important;">
+                                <input id="inputGroupFile01" type = "file" name = "file" accept = ".png, .jpg" class="custom-file-input">
+                                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                <p>*Accepted file types: png, jpg</p>
                             </div>
+                            <br /><br />
                             <div class="text-center">
                                 <button style="alignment: center; margin-bottom: 60px; margin-top: 30px" type="submit" class="btn btn-outline-primary" value="Add new question">Add new question</button>
                             </div>
@@ -75,5 +81,14 @@
             </div>
         </div>
     {% endif %}
+
+
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function() {
+          var fileName = $(this).val().split("\\").pop();
+          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
 </body>
 </html>
