@@ -74,12 +74,12 @@ def question_page(question_id):
     if is_logged_in():
         #question_user_id = data_manager.get_user_id_by_question_id(question_id)
         session_user_id = data_manager.get_session_user_id(session['user_name'])
-        return render_template("question_page2.html", question=question[0], question_id=question_id,
+        return render_template("question_page3.html", question=question[0], question_id=question_id,
                                answers=answers,  answers_keys=dictionary_keys, comments=comments,
                                comments_keys=comments_keys, tag=tag, question_user_id=question_user_id,
                                session_user_id=session_user_id, nologin=False, username=username)
     else:
-        return render_template("question_page2.html", question=question[0], question_id=question_id,
+        return render_template("question_page3.html", question=question[0], question_id=question_id,
                                answers=answers,  answers_keys=dictionary_keys, comments=comments,
                                comments_keys=comments_keys, tag=tag, nologin=True, username=username)
 
