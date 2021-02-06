@@ -73,7 +73,7 @@
                     <div class="media align-items-end profile-header">
                         <div class="profile mr-3"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="..." width="130" class="rounded mb-2 img-thumbnail"></div>
                         <div class="media-body mb-5 text-white">
-                            <h4 class="mt-0 mb-0">Filip Brzeziński</h4>
+                            <h4 class="mt-0 mb-0">{{ session.user_name }}</h4>
                             <br>
                             <br>
                         </div>
@@ -83,23 +83,24 @@
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h5 class="mb-0">User information</h5>
                     </div>
+
+            {% for data in user_data %}
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card bg-c-blue order-card">
                             <div class="card-block">
                                 <h6 class="m-b-20">QUESTIONS</h6>
-                                <h2 class="text-right"><span>{{ user_data[0] }}</span></h2>
+                                <h2 class="text-right"><span>{{ data['count_of_asked_questions'] }}</span></h2>
                                 <i class="fa fa-question" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
 
-
                     <div class="col-md-4">
                         <div class="card bg-c-yellow order-card">
                             <div class="card-block">
                                 <h6 class="m-b-20">ANSWERS</h6>
-                                <h2 class="text-right"><span>{{ user_data[1] }}</span></h2>
+                                <h2 class="text-right"><span>{{ data['count_of_answers'] }}</span></h2>
                                 <i class="fa fa-refresh"></i>
                             </div>
                         </div>
@@ -109,7 +110,7 @@
                         <div class="card bg-c-pink order-card">
                             <div class="card-block">
                                 <h6 class="m-b-20">COMMENTS</h6>
-                                <h2 class="text-right"><span>{{ user_data[2] }}</span></h2>
+                                <h2 class="text-right"><span>{{ data['count_of_comments'] }}</span></h2>
                                 <i class="fa fa-comments" aria-hidden="true"></i>
                             </div>
                         </div>
@@ -119,11 +120,13 @@
                         <div class="card bg-c-green order-card">
                             <div class="card-block">
                                 <h6 class="m-b-20">REPUTATION</h6>
-                                <h2 class="text-right"><span>{{ user_data[3] }}</span></h2>
+                                <h2 class="text-right"><span>{{ data['reputation'] }}</span></h2>
                                 <i class="fa fa-rocket"></i>
                             </div>
                         </div>
                     </div>
+            {% endfor %}
+
                 </div>
             </div>
         </div>
@@ -135,8 +138,8 @@
                         <small>{{ question['submission_time'] }}</small>
                     </div>
                         <p class="mb-1">{{ question['message'] }}</p>
-                        <small style="margin-right: 30px"><i class="fa fa-eye" aria-hidden="true"></i>{{ question['view_number'] }}</small>
-                        <small {% if question['vote_number'] >= 0 %} style="color: green" {% else %} style="color: red" {% endif %}><i class="fa fa-balance-scale" aria-hidden="true"></i>{{ question['vote_number'] }}</small>
+                        <small style="margin-right: 30px"><i class="fa fa-eye" aria-hidden="true" style="margin-right: 5px"></i>{{ question['view_number'] }}</small>
+                        <small {% if question['vote_number'] >= 0 %} style="color: green" {% else %} style="color: red" {% endif %}><i class="fa fa-balance-scale" aria-hidden="true" style="margin-right: 5px"></i>{{ question['vote_number'] }}</small>
                 </a>
                 {% endfor %}
             </div>

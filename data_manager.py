@@ -26,14 +26,42 @@ def user_questions(cursor: RealDictCursor, user_id):
 
 @connection.connection_handler
 def user_data(cursor: RealDictCursor, user_id):
+    # query = """
+    # SELECT COUNT(question) as questions FROM question WHERE user_id = %(user_id)s
+    # UNION ALL
+    # SELECT COUNT(answer) as answrs FROM answer WHERE user_id = %(user_id)s
+    # UNION ALL
+    # SELECT COUNT(comment) as comments FROM comment WHERE user_id = %(user_id)s
+    # UNION ALL
+    # SELECT reputation FROM users WHERE user_id = %(user_id)s
+    # """
+
     query = """
-    SELECT COUNT(question) as questions FROM question WHERE user_id = %(user_id)s
-    UNION ALL
-    SELECT COUNT(answer) as answrs FROM answer WHERE user_id = %(user_id)s
-    UNION ALL
-    SELECT COUNT(comment) as comments FROM comment WHERE user_id = %(user_id)s
-    UNION ALL
-    SELECT reputation FROM users WHERE user_id = %(user_id)s
+    SELECT COALESCE(count_of_asked_questions, 0) count_of_asked_questions, COALESCE(count_of_answers, 0) count_of_answers, COALESCE(count_of_comments, 0) count_of_comments,
+       reputation
+    FROM
+     users u LEFT JOIN
+     (
+         SELECT a.user_id, COUNT(a.user_id) count_of_answers
+         FROM users
+                  LEFT JOIN answer a on users.user_id = a.user_id
+         GROUP BY a.user_id
+     ) answers on u.user_id = answers.user_id
+     LEFT JOIN
+     (
+         SELECT a.user_id, COUNT(a.user_id) count_of_asked_questions
+         FROM users
+                  LEFT JOIN question a on users.user_id = a.user_id
+         GROUP BY a.user_id
+     ) questions on u.user_id = questions.user_id
+    LEFT JOIN
+    (
+         SELECT a.user_id, COUNT(a.user_id) count_of_comments
+         FROM users
+                  LEFT JOIN comment a on users.user_id = a.user_id
+         GROUP BY a.user_id
+    ) comments on u.user_id = comments.user_id
+    WHERE questions.user_id = %(user_id)s
     """
 
     param = {'user_id': user_id}
