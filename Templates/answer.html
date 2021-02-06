@@ -6,6 +6,10 @@
     <title>Add an answer</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="{{ url_for("static", filename="css/bootstrap.css") }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <style>
         body {
@@ -53,10 +57,12 @@
                                 <label for="message">Answer:</label>
                                 <textarea name="message" id="message" class="form-control" minlength="1" rows="3"></textarea>
                             </div>
-                            <div class="form-group col-md-6" style="margin: 30px auto 0px auto">
-                                <input type = "file" name = "image" accept = ".png, .jpg">
+                            <div class="form-group col-md-6 custom-file" style="margin: 30px auto 0px auto; alignment: center; display: block !important;">
+                                <input id="inputGroupFile01" type = "file" name = "image" accept = ".png, .jpg" class="custom-file-input">
+                                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                                 <p>*Accepted file types: png, jpg</p>
                             </div>
+                            <br /><br />
                             <div class="text-center">
                                 <button style="alignment: center; margin-bottom: 60px; margin-top: 30px" type="submit" class="btn btn-outline-primary" value="Add answer">Add answer</button>
                             </div>
@@ -85,5 +91,12 @@
             </div>
         </div>
 {% endif %}
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function() {
+          var fileName = $(this).val().split("\\").pop();
+          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
 </body>
 </html>
